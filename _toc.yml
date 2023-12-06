@@ -1,0 +1,14 @@
+# Table of contents
+# Learn more at https://jupyterbook.org/customize/toc.html
+
+format: jb-book
+root: intro
+chapters:
+- file: 01_opening_and_understanding.ipynb
+- file: 02_creating_plots.ipynb
+- file: 03_extracting_data_to_different_formats.ipynb
+- file: 04_creating_a_cfnetcdf_file.ipynb
+- file: 05_How_to_structure_your_NetCDF_file_or_files.ipynb
+- file: 06_creating_multiple_cfnetcdf_files_in_one_go.ipynb
+
+
