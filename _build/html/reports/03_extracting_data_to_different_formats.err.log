@@ -21,17 +21,15 @@ Traceback (most recent call last):
     raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
 nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
 ------------------
-import numpy as np
 timestamp = np.datetime64(dt.datetime(2022, 3, 5, 11)) 
 timestamp
 ------------------
 
 [0;31m---------------------------------------------------------------------------[0m
 [0;31mNameError[0m                                 Traceback (most recent call last)
-Cell [0;32mIn[9], line 2[0m
-[1;32m      1[0m [38;5;28;01mimport[39;00m [38;5;21;01mnumpy[39;00m [38;5;28;01mas[39;00m [38;5;21;01mnp[39;00m
-[0;32m----> 2[0m timestamp [38;5;241m=[39m np[38;5;241m.[39mdatetime64(dt[38;5;241m.[39mdatetime([38;5;241m2022[39m, [38;5;241m3[39m, [38;5;241m5[39m, [38;5;241m11[39m)) 
-[1;32m      3[0m timestamp
+Cell [0;32mIn[9], line 1[0m
+[0;32m----> 1[0m timestamp [38;5;241m=[39m np[38;5;241m.[39mdatetime64(dt[38;5;241m.[39mdatetime([38;5;241m2022[39m, [38;5;241m3[39m, [38;5;241m5[39m, [38;5;241m11[39m)) 
+[1;32m      2[0m timestamp
 
 [0;31mNameError[0m: name 'dt' is not defined
 NameError: name 'dt' is not defined

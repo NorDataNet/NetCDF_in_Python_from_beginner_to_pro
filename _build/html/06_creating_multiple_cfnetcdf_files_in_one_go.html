@@ -66,7 +66,7 @@ const thebe_selector_output = ".output, .cell_output"
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="07: Combining data from multiple netcdf files" href="07_combing_data_from_multiple_netcdf_files.html" />
-    <link rel="prev" title="Creating a CF-NetCDF file" href="04_creating_a_cfnetcdf_file.html" />
+    <link rel="prev" title="05: How to structure you NetCDF file or files" href="05_how_to_structure_your_NetCDF_file_or_files.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -168,11 +168,12 @@ const thebe_selector_output = ".output, .cell_output"
             </li>
         </ul>
         <ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="01_opening_and_understanding.html">Opening and understanding</a></li>
-<li class="toctree-l1"><a class="reference internal" href="02_creating_plots.html">Creating Plots</a></li>
-<li class="toctree-l1"><a class="reference internal" href="03_extracting_data_to_different_formats.html">Extracting data to different formats</a></li>
-<li class="toctree-l1"><a class="reference internal" href="04_creating_a_cfnetcdf_file.html">Creating a CF-NetCDF file</a></li>
+<li class="toctree-l1"><a class="reference internal" href="01_opening_and_understanding.html">01: Opening and understanding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_creating_plots.html">02: Creating Plots</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_extracting_data_to_different_formats.html">03: Extracting data to different formats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_creating_a_cfnetcdf_file.html">04: Creating a CF-NetCDF file</a></li>
 
+<li class="toctree-l1"><a class="reference internal" href="05_how_to_structure_your_NetCDF_file_or_files.html">05: How to structure you NetCDF file or files</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">06: Creating multiple CF-NetCDF files in one go</a></li>
 <li class="toctree-l1"><a class="reference internal" href="07_combing_data_from_multiple_netcdf_files.html">07: Combining data from multiple netcdf files</a></li>
 <li class="toctree-l1"><a class="reference internal" href="08_ancillary_variables.html">08: Ancillary variables</a></li>
@@ -370,11 +371,17 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-for-1-depth-profile">Example for 1 depth profile</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-multiple-files-using-a-for-loop">Creating multiple files using a for loop</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tabular-file-per-depth-profile">1 tabular file per depth profile</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-refresh-of-how-to-create-a-single-netcdf-file">A refresh of how to create a single NetCDF file</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-quick-introduction-to-for-loops">A quick introduction to for loops</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#looping-through-csv-files-that-contain-your-data">Looping through CSV files that contain your data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#different-global-attributes-for-each-netcdf-file">Different global attributes for each NetCDF file</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#json">JSON:</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#yaml">YAML</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#csv">CSV</a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#looping-through-the-data-and-global-attributes-at-the-same-time">Looping through the data and global attributes at the same time</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-multiple-cf-netcdf-files">Creating multiple CF-NetCDF files</a></li>
 </ul>
             </nav>
         </div>
@@ -397,26 +404,29 @@ document.write(`
 </ul>
 <p>One might think that this would involve more work for the data creator and user. However, if the files are similar (and they should be if they follow the CF and ACDD conventions) this is not neccessarily the case.</p>
 <p>In this notebook we will look at we can easily create multiple NetCDF files in one go using Python.</p>
-<p>Let’s start with some code to create one basic CF-NetCDF file. Here we are assuming that your data have been loaded from some tabular file (CSV, XLSX, CNV etc) into a pandas dataframe.</p>
-<section id="example-for-1-depth-profile">
-<h2>Example for 1 depth profile<a class="headerlink" href="#example-for-1-depth-profile" title="Permalink to this heading">#</a></h2>
+<p>Imagine you have multiple depth profiles. The two most likely ways your data are structured are:</p>
+<ul class="simple">
+<li><p>1 tabular file per depth profile</p></li>
+<li><p>All profiles in 1 tabular file</p></li>
+</ul>
+<p>In this tutorial we present an example with a 1 tabular file per depth profile. If your data are stored altogether in one file, the first thing you will need to do is separate them. You can do this manually before you start or in your code.</p>
+<section id="a-refresh-of-how-to-create-a-single-netcdf-file">
+<h2>A refresh of how to create a single NetCDF file<a class="headerlink" href="#a-refresh-of-how-to-create-a-single-netcdf-file" title="Permalink to this heading">#</a></h2>
+<p>Let’s start with some code to create one basic CF-NetCDF file.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">import</span> <span class="nn">glob</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">yaml</span>
 
 <span class="c1"># Get the current timestamp in UTC and format it in ISO8601</span>
 <span class="n">time_now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">T%H:%M:%SZ&#39;</span><span class="p">)</span>
 
-<span class="c1"># Creating dummy data</span>
-<span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;Pressure&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">40</span><span class="p">],</span> 
-    <span class="s1">&#39;Temperature&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">25.5</span><span class="p">,</span> <span class="mf">24.8</span><span class="p">,</span> <span class="mf">23.9</span><span class="p">,</span> <span class="mf">22.5</span><span class="p">,</span> <span class="mf">21.0</span><span class="p">],</span> 
-    <span class="s1">&#39;Salinity&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">35.5</span><span class="p">,</span> <span class="mf">35.6</span><span class="p">,</span> <span class="mf">35.7</span><span class="p">,</span> <span class="mf">35.8</span><span class="p">,</span> <span class="mf">35.9</span><span class="p">]</span>  
-<span class="p">}</span>
-<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-<span class="c1"># df = pd.read_csv(&#39;/path/to/my/data.csv&#39;)</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;data/csv_files/depth_profile_S1.csv&#39;</span><span class="p">)</span>
 
 <span class="c1"># Create an xarray dataset from the dataframe</span>
 <span class="n">xrds</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">(</span>
@@ -486,10 +496,10 @@ document.write(`
     <span class="s1">&#39;featureType&#39;</span><span class="p">:</span> <span class="s1">&#39;profile&#39;</span><span class="p">,</span>
     <span class="s1">&#39;station_name&#39;</span><span class="p">:</span> <span class="s1">&#39;S1&#39;</span> <span class="c1"># Custom attribute, but you can add any attribute you like alongside the minimum requirements.</span>
 <span class="p">}</span>
-<span class="n">xrds</span>
 
 <span class="c1"># Save the dataset to a NetCDF file</span>
-<span class="c1"># xrds.to_netcdf(&#39;/path/to/your/depth_profile.nc&#39;)</span>
+<span class="n">xrds</span><span class="o">.</span><span class="n">to_netcdf</span><span class="p">(</span><span class="s1">&#39;data/netcdf_files/06_depth_profile_one_file.nc&#39;</span><span class="p">)</span>
+<span class="n">xrds</span>
 </pre></div>
 </div>
 </div>
@@ -858,12 +868,12 @@ dl.xr-attrs {
   fill: currentColor;
 }
 </style><pre class='xr-text-repr-fallback'>&lt;xarray.Dataset&gt;
-Dimensions:      (pressure: 5)
+Dimensions:      (pressure: 10)
 Coordinates:
-  * pressure     (pressure) int64 0 10 20 30 40
+  * pressure     (pressure) float64 39.46 58.12 57.36 3.418 ... 2.231 67.68 83.0
 Data variables:
-    Temperature  (pressure) float64 25.5 24.8 23.9 22.5 21.0
-    Salinity     (pressure) float64 35.5 35.6 35.7 35.8 35.9
+    Temperature  (pressure) float64 1.955 1.42 1.715 2.844 ... 1.394 2.004 1.583
+    Salinity     (pressure) float64 34.7 34.84 34.73 35.35 ... 35.15 35.48 34.66
 Attributes: (12/32)
     id:                     your_unique_id_here
     naming_authority:       institution that provides the id
@@ -877,21 +887,19 @@ Attributes: (12/32)
     instrument_vocabulary:  http://vocab.nerc.ac.uk/collection/L22/current/TO...
     license:                https://creativecommons.org/licenses/by/4.0/
     featureType:            profile
-    station_name:           S1</pre><div class='xr-wrap' style='display:none'><div class='xr-header'><div class='xr-obj-type'>xarray.Dataset</div></div><ul class='xr-sections'><li class='xr-section-item'><input id='section-4fdc0ac9-1fa0-47bb-a0be-9610e5841be0' class='xr-section-summary-in' type='checkbox' disabled ><label for='section-4fdc0ac9-1fa0-47bb-a0be-9610e5841be0' class='xr-section-summary'  title='Expand/collapse section'>Dimensions:</label><div class='xr-section-inline-details'><ul class='xr-dim-list'><li><span class='xr-has-index'>pressure</span>: 5</li></ul></div><div class='xr-section-details'></div></li><li class='xr-section-item'><input id='section-6049c01a-c713-4df6-91bc-242056d98f24' class='xr-section-summary-in' type='checkbox'  checked><label for='section-6049c01a-c713-4df6-91bc-242056d98f24' class='xr-section-summary' >Coordinates: <span>(1)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>pressure</span></div><div class='xr-var-dims'>(pressure)</div><div class='xr-var-dtype'>int64</div><div class='xr-var-preview xr-preview'>0 10 20 30 40</div><input id='attrs-3196c9c3-fd83-4c90-8ea0-194e71a33467' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-3196c9c3-fd83-4c90-8ea0-194e71a33467' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-4bfb42d6-a2f5-4356-82c9-3c05d866176d' class='xr-var-data-in' type='checkbox'><label for='data-4bfb42d6-a2f5-4356-82c9-3c05d866176d' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>standard_name :</span></dt><dd>sea_water_pressure</dd><dt><span>long_name :</span></dt><dd>Sea water pressure</dd><dt><span>units :</span></dt><dd>dbar</dd><dt><span>coverage_content_type :</span></dt><dd>coordinate</dd></dl></div><div class='xr-var-data'><pre>array([ 0, 10, 20, 30, 40])</pre></div></li></ul></div></li><li class='xr-section-item'><input id='section-3fea691c-0ff9-4857-a2bd-6a06c2fa5761' class='xr-section-summary-in' type='checkbox'  checked><label for='section-3fea691c-0ff9-4857-a2bd-6a06c2fa5761' class='xr-section-summary' >Data variables: <span>(2)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-var-name'><span>Temperature</span></div><div class='xr-var-dims'>(pressure)</div><div class='xr-var-dtype'>float64</div><div class='xr-var-preview xr-preview'>25.5 24.8 23.9 22.5 21.0</div><input id='attrs-eea64e6b-1920-43de-9267-9bd08bebb91a' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-eea64e6b-1920-43de-9267-9bd08bebb91a' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-2fa9cb74-48b5-438e-a2a3-ca31f80e129f' class='xr-var-data-in' type='checkbox'><label for='data-2fa9cb74-48b5-438e-a2a3-ca31f80e129f' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>standard_name :</span></dt><dd>sea_water_temperature</dd><dt><span>long_name :</span></dt><dd>Temperature of sea water</dd><dt><span>units :</span></dt><dd>degrees_Celsius</dd><dt><span>coverage_content_type :</span></dt><dd>physicalMeasurement</dd></dl></div><div class='xr-var-data'><pre>array([25.5, 24.8, 23.9, 22.5, 21. ])</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span>Salinity</span></div><div class='xr-var-dims'>(pressure)</div><div class='xr-var-dtype'>float64</div><div class='xr-var-preview xr-preview'>35.5 35.6 35.7 35.8 35.9</div><input id='attrs-f8623048-9694-4fa1-a929-710eec9906a8' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-f8623048-9694-4fa1-a929-710eec9906a8' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-4d0cfcf9-dd53-421a-9aff-7e398721501f' class='xr-var-data-in' type='checkbox'><label for='data-4d0cfcf9-dd53-421a-9aff-7e398721501f' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>standard_name :</span></dt><dd>sea_water_salinity</dd><dt><span>long_name :</span></dt><dd>Salinity of sea water</dd><dt><span>units :</span></dt><dd>PSU</dd><dt><span>coverage_content_type :</span></dt><dd>physicalMeasurement</dd></dl></div><div class='xr-var-data'><pre>array([35.5, 35.6, 35.7, 35.8, 35.9])</pre></div></li></ul></div></li><li class='xr-section-item'><input id='section-3c7e48fb-a5c4-4eaa-bedc-cd2638e2d146' class='xr-section-summary-in' type='checkbox'  ><label for='section-3c7e48fb-a5c4-4eaa-bedc-cd2638e2d146' class='xr-section-summary' >Indexes: <span>(1)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-index-name'><div>pressure</div></div><div class='xr-index-preview'>PandasIndex</div><div></div><input id='index-11daf4d1-4e5a-4273-ae58-48a2dd658804' class='xr-index-data-in' type='checkbox'/><label for='index-11daf4d1-4e5a-4273-ae58-48a2dd658804' title='Show/Hide index repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-index-data'><pre>PandasIndex(Int64Index([0, 10, 20, 30, 40], dtype=&#x27;int64&#x27;, name=&#x27;pressure&#x27;))</pre></div></li></ul></div></li><li class='xr-section-item'><input id='section-97001334-096f-4b72-8bef-4863ff39c991' class='xr-section-summary-in' type='checkbox'  ><label for='section-97001334-096f-4b72-8bef-4863ff39c991' class='xr-section-summary' >Attributes: <span>(32)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><dl class='xr-attrs'><dt><span>id :</span></dt><dd>your_unique_id_here</dd><dt><span>naming_authority :</span></dt><dd>institution that provides the id</dd><dt><span>title :</span></dt><dd>Depth Profile Data</dd><dt><span>summary :</span></dt><dd>This dataset contains depth profiles of temperature and salinity measurements.</dd><dt><span>keywords :</span></dt><dd>sea_water_temperature, sea_water_salinity</dd><dt><span>keywords_vocabulary :</span></dt><dd>CF:NetCDF COARDS Climate and Forecast Standard Names</dd><dt><span>geospatial_lat_min :</span></dt><dd>80.6713</dd><dt><span>geospatial_lat_max :</span></dt><dd>80.6713</dd><dt><span>geospatial_lon_min :</span></dt><dd>31.2093</dd><dt><span>geospatial_lon_max :</span></dt><dd>31.2093</dd><dt><span>time_coverage_start :</span></dt><dd>2020-04-26T09:56:00Z</dd><dt><span>time_coverage_end :</span></dt><dd>2020-04-26T09:56:00Z</dd><dt><span>Conventions :</span></dt><dd>ACDD-1.3, CF-1.11</dd><dt><span>history :</span></dt><dd>2024-01-03T11:48:04Z: Modified by YourName using Python</dd><dt><span>source :</span></dt><dd>Measurement</dd><dt><span>processing_level :</span></dt><dd>Level of processing/quality control</dd><dt><span>date_created :</span></dt><dd>2024-01-03T11:48:04Z</dd><dt><span>creator_type :</span></dt><dd>person</dd><dt><span>creator_institution :</span></dt><dd>Your Institution</dd><dt><span>creator_name :</span></dt><dd>Your Name</dd><dt><span>creator_email :</span></dt><dd>your@email.com</dd><dt><span>creator_url :</span></dt><dd>your_url_here</dd><dt><span>institution :</span></dt><dd>Your Institution</dd><dt><span>publisher_name :</span></dt><dd>Publisher Name</dd><dt><span>publisher_email :</span></dt><dd>publisher@email.com</dd><dt><span>publisher_url :</span></dt><dd>publisher_url_here</dd><dt><span>project :</span></dt><dd>Your Project Name</dd><dt><span>instrument :</span></dt><dd>CTD</dd><dt><span>instrument_vocabulary :</span></dt><dd>http://vocab.nerc.ac.uk/collection/L22/current/TOOL0001/</dd><dt><span>license :</span></dt><dd>https://creativecommons.org/licenses/by/4.0/</dd><dt><span>featureType :</span></dt><dd>profile</dd><dt><span>station_name :</span></dt><dd>S1</dd></dl></div></li></ul></div></div></div></div>
+    station_name:           S1</pre><div class='xr-wrap' style='display:none'><div class='xr-header'><div class='xr-obj-type'>xarray.Dataset</div></div><ul class='xr-sections'><li class='xr-section-item'><input id='section-29d45723-239d-4c9a-9cee-aa237432e34c' class='xr-section-summary-in' type='checkbox' disabled ><label for='section-29d45723-239d-4c9a-9cee-aa237432e34c' class='xr-section-summary'  title='Expand/collapse section'>Dimensions:</label><div class='xr-section-inline-details'><ul class='xr-dim-list'><li><span class='xr-has-index'>pressure</span>: 10</li></ul></div><div class='xr-section-details'></div></li><li class='xr-section-item'><input id='section-01147f30-bfcd-488c-87b5-4473cac6977d' class='xr-section-summary-in' type='checkbox'  checked><label for='section-01147f30-bfcd-488c-87b5-4473cac6977d' class='xr-section-summary' >Coordinates: <span>(1)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>pressure</span></div><div class='xr-var-dims'>(pressure)</div><div class='xr-var-dtype'>float64</div><div class='xr-var-preview xr-preview'>39.46 58.12 57.36 ... 67.68 83.0</div><input id='attrs-5a206faf-a566-4352-8bfd-d54010947b4c' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-5a206faf-a566-4352-8bfd-d54010947b4c' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-006d2dae-e9d6-4cce-b4be-23b5928f739e' class='xr-var-data-in' type='checkbox'><label for='data-006d2dae-e9d6-4cce-b4be-23b5928f739e' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>standard_name :</span></dt><dd>sea_water_pressure</dd><dt><span>long_name :</span></dt><dd>Sea water pressure</dd><dt><span>units :</span></dt><dd>dbar</dd><dt><span>coverage_content_type :</span></dt><dd>coordinate</dd></dl></div><div class='xr-var-data'><pre>array([39.455654, 58.119035, 57.355769,  3.418398, 22.05053 , 18.760447,
+       94.570563,  2.230532, 67.67562 , 83.00015 ])</pre></div></li></ul></div></li><li class='xr-section-item'><input id='section-fb980a5f-7e1c-4d42-acfb-4c5d808adb08' class='xr-section-summary-in' type='checkbox'  checked><label for='section-fb980a5f-7e1c-4d42-acfb-4c5d808adb08' class='xr-section-summary' >Data variables: <span>(2)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-var-name'><span>Temperature</span></div><div class='xr-var-dims'>(pressure)</div><div class='xr-var-dtype'>float64</div><div class='xr-var-preview xr-preview'>1.955 1.42 1.715 ... 2.004 1.583</div><input id='attrs-b43da830-aa62-4cba-9797-d9b545668d44' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-b43da830-aa62-4cba-9797-d9b545668d44' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-7d98632f-48d5-479a-ae4a-d1c66d0f404f' class='xr-var-data-in' type='checkbox'><label for='data-7d98632f-48d5-479a-ae4a-d1c66d0f404f' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>standard_name :</span></dt><dd>sea_water_temperature</dd><dt><span>long_name :</span></dt><dd>Temperature of sea water</dd><dt><span>units :</span></dt><dd>degrees_Celsius</dd><dt><span>coverage_content_type :</span></dt><dd>physicalMeasurement</dd></dl></div><div class='xr-var-data'><pre>array([1.95533107, 1.41958791, 1.71529616, 2.84360563, 2.41972826,
+       1.22250547, 2.05988036, 1.39393846, 2.0035247 , 1.58250776])</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span>Salinity</span></div><div class='xr-var-dims'>(pressure)</div><div class='xr-var-dtype'>float64</div><div class='xr-var-preview xr-preview'>34.7 34.84 34.73 ... 35.48 34.66</div><input id='attrs-f6212681-3927-4d96-9b23-ab3911ac5148' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-f6212681-3927-4d96-9b23-ab3911ac5148' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-8019cc14-3dfb-4e37-be44-be41c27d5138' class='xr-var-data-in' type='checkbox'><label for='data-8019cc14-3dfb-4e37-be44-be41c27d5138' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>standard_name :</span></dt><dd>sea_water_salinity</dd><dt><span>long_name :</span></dt><dd>Salinity of sea water</dd><dt><span>units :</span></dt><dd>PSU</dd><dt><span>coverage_content_type :</span></dt><dd>physicalMeasurement</dd></dl></div><div class='xr-var-data'><pre>array([34.69975973, 34.84037386, 34.72520826, 35.34808803, 34.83566471,
+       34.77718679, 35.03124111, 35.14946971, 35.47912241, 34.65869081])</pre></div></li></ul></div></li><li class='xr-section-item'><input id='section-6c914661-db45-481e-932e-0e4c312240c0' class='xr-section-summary-in' type='checkbox'  ><label for='section-6c914661-db45-481e-932e-0e4c312240c0' class='xr-section-summary' >Indexes: <span>(1)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-index-name'><div>pressure</div></div><div class='xr-index-preview'>PandasIndex</div><div></div><input id='index-d800975d-1480-494f-9afa-3a4a9b89d96c' class='xr-index-data-in' type='checkbox'/><label for='index-d800975d-1480-494f-9afa-3a4a9b89d96c' title='Show/Hide index repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-index-data'><pre>PandasIndex(Float64Index([  39.4556544280039,  58.11903479614398,   57.3557689889737,
+              3.4183980542843884,  22.05053002488748,  18.76044658260758,
+                94.5705628202497, 2.2305319880886354,  67.67561997590708,
+               83.00015013251017],
+             dtype=&#x27;float64&#x27;, name=&#x27;pressure&#x27;))</pre></div></li></ul></div></li><li class='xr-section-item'><input id='section-3c60740c-dd01-4c6f-b3bd-04a862fc8a97' class='xr-section-summary-in' type='checkbox'  ><label for='section-3c60740c-dd01-4c6f-b3bd-04a862fc8a97' class='xr-section-summary' >Attributes: <span>(32)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><dl class='xr-attrs'><dt><span>id :</span></dt><dd>your_unique_id_here</dd><dt><span>naming_authority :</span></dt><dd>institution that provides the id</dd><dt><span>title :</span></dt><dd>Depth Profile Data</dd><dt><span>summary :</span></dt><dd>This dataset contains depth profiles of temperature and salinity measurements.</dd><dt><span>keywords :</span></dt><dd>sea_water_temperature, sea_water_salinity</dd><dt><span>keywords_vocabulary :</span></dt><dd>CF:NetCDF COARDS Climate and Forecast Standard Names</dd><dt><span>geospatial_lat_min :</span></dt><dd>80.6713</dd><dt><span>geospatial_lat_max :</span></dt><dd>80.6713</dd><dt><span>geospatial_lon_min :</span></dt><dd>31.2093</dd><dt><span>geospatial_lon_max :</span></dt><dd>31.2093</dd><dt><span>time_coverage_start :</span></dt><dd>2020-04-26T09:56:00Z</dd><dt><span>time_coverage_end :</span></dt><dd>2020-04-26T09:56:00Z</dd><dt><span>Conventions :</span></dt><dd>ACDD-1.3, CF-1.11</dd><dt><span>history :</span></dt><dd>2024-01-03T14:33:07Z: Modified by YourName using Python</dd><dt><span>source :</span></dt><dd>Measurement</dd><dt><span>processing_level :</span></dt><dd>Level of processing/quality control</dd><dt><span>date_created :</span></dt><dd>2024-01-03T14:33:07Z</dd><dt><span>creator_type :</span></dt><dd>person</dd><dt><span>creator_institution :</span></dt><dd>Your Institution</dd><dt><span>creator_name :</span></dt><dd>Your Name</dd><dt><span>creator_email :</span></dt><dd>your@email.com</dd><dt><span>creator_url :</span></dt><dd>your_url_here</dd><dt><span>institution :</span></dt><dd>Your Institution</dd><dt><span>publisher_name :</span></dt><dd>Publisher Name</dd><dt><span>publisher_email :</span></dt><dd>publisher@email.com</dd><dt><span>publisher_url :</span></dt><dd>publisher_url_here</dd><dt><span>project :</span></dt><dd>Your Project Name</dd><dt><span>instrument :</span></dt><dd>CTD</dd><dt><span>instrument_vocabulary :</span></dt><dd>http://vocab.nerc.ac.uk/collection/L22/current/TOOL0001/</dd><dt><span>license :</span></dt><dd>https://creativecommons.org/licenses/by/4.0/</dd><dt><span>featureType :</span></dt><dd>profile</dd><dt><span>station_name :</span></dt><dd>S1</dd></dl></div></li></ul></div></div></div></div>
 </div>
 </section>
-<section id="creating-multiple-files-using-a-for-loop">
-<h2>Creating multiple files using a for loop<a class="headerlink" href="#creating-multiple-files-using-a-for-loop" title="Permalink to this heading">#</a></h2>
-<p>You have multiple depth profiles. The two most likely ways your data are structured are:</p>
-<ul class="simple">
-<li><p>1 tabular file per depth profile</p></li>
-<li><p>All profiles in 1 tabular file</p></li>
-</ul>
-<p>In each case we will use for loops to create one NetCDF file per loop.</p>
-<section id="tabular-file-per-depth-profile">
-<h3>1 tabular file per depth profile<a class="headerlink" href="#tabular-file-per-depth-profile" title="Permalink to this heading">#</a></h3>
-<p>Hopefully all your tabular files are structured in the same way with the same column headers. If not, fix this first!</p>
-<p>Let’s firstly show a basic for loop for those who are unfamiliar.</p>
+<section id="a-quick-introduction-to-for-loops">
+<h2>A quick introduction to for loops<a class="headerlink" href="#a-quick-introduction-to-for-loops" title="Permalink to this heading">#</a></h2>
+<p>A for loop is a way to do the same thing multiple times for different items in a list or collection. Let’s firstly demonstrate how a for loop works for those who are unfamiliar.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">numbers</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span>
@@ -912,157 +920,240 @@ Printing number 5
 </div>
 </div>
 </div>
-<p>Now imagine we are loading in each of your tabular files in turn. Imagine you have 3 files.</p>
+</section>
+<section id="looping-through-csv-files-that-contain-your-data">
+<h2>Looping through CSV files that contain your data<a class="headerlink" href="#looping-through-csv-files-that-contain-your-data" title="Permalink to this heading">#</a></h2>
+<p>Hopefully all your tabular files are structured in the same way with the same column headers. If not, fix this first!</p>
+<p>Imagine you have a directory that has multiple CSV files in it, each one containing a depth profile. Let’s loop through each file and load it.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">files</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;file1.csv&#39;</span><span class="p">,</span><span class="s1">&#39;file2.csv&#39;</span><span class="p">,</span><span class="s1">&#39;file3.csv&#39;</span><span class="p">]</span>
-
-<span class="c1">#for file in files:</span>
-<span class="c1">#    df = pd.read_csv(file) # This won&#39;t work because these files don&#39;t exist! But you get the idea.</span>
-</pre></div>
-</div>
-</div>
-</div>
-<p>Or imagine you have lots of files; it might be impractical to write down the name of each.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">glob</span>
-
-<span class="c1"># Path to the folder containing CSV files</span>
-<span class="n">folder_path</span> <span class="o">=</span> <span class="s1">&#39;/path/to/your/folder/&#39;</span>
-
-<span class="c1"># Get a list of file paths for all CSV files in the folder</span>
-<span class="n">files</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">folder_path</span> <span class="o">+</span> <span class="s1">&#39;*.csv&#39;</span><span class="p">)</span>
-
-<span class="c1">#for file in files:</span>
-<span class="c1">#    df = pd.read_csv(file) # This won&#39;t work because these files don&#39;t exist! But you get the idea.</span>
-</pre></div>
-</div>
-</div>
-</div>
-<p>Now let’s build on this to create an xarray object. We will leave out the global attributes for now.</p>
-<p>All we have to do it stick our code above inside the for loop to generate one NetCDF file per loop.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-
-<span class="n">files</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;file1.csv&#39;</span><span class="p">,</span><span class="s1">&#39;file2.csv&#39;</span><span class="p">,</span><span class="s1">&#39;file3.csv&#39;</span><span class="p">]</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">folder_path</span> <span class="o">=</span> <span class="s1">&#39;data/csv_files/&#39;</span> <span class="c1"># Path to the folder containing CSV files</span>
+<span class="n">files</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">folder_path</span> <span class="o">+</span> <span class="s1">&#39;*.csv&#39;</span><span class="p">)</span> <span class="c1"># Get a list of file paths for all CSV files in the folder</span>
 
 <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
-    <span class="c1"># df = pd.read_csv(file)</span>
-    
-    <span class="c1"># Since we don&#39;t have the files here, let&#39;s create dummy profiles instead.</span>
-    <span class="n">pressures</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>  <span class="c1"># 10 Random pressures between 0 and 100</span>
-    <span class="n">temperatures</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>  <span class="c1"># Random temperatures between 2°C and 30°C</span>
-    <span class="n">salinities</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>  <span class="c1"># Random salinity between 30 and 40 PSU</span>
-    
-    <span class="c1"># Creating a DataFrame for the depth profile</span>
-    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
-        <span class="s1">&#39;Pressure&#39;</span><span class="p">:</span> <span class="n">pressures</span><span class="p">,</span>
-        <span class="s1">&#39;Temperature&#39;</span><span class="p">:</span> <span class="n">temperatures</span><span class="p">,</span>
-        <span class="s1">&#39;Salinity&#39;</span><span class="p">:</span> <span class="n">salinities</span>
-    <span class="p">})</span>
-    
-    <span class="c1"># Create an xarray dataset from the dataframe</span>
-    <span class="n">xrds</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">(</span>
-        <span class="n">coords</span><span class="o">=</span><span class="p">{</span>
-            <span class="s1">&#39;pressure&#39;</span><span class="p">:</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Pressure&#39;</span><span class="p">]</span>
-        <span class="p">},</span>
-        <span class="n">data_vars</span><span class="o">=</span><span class="p">{</span>
-            <span class="s1">&#39;Temperature&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;pressure&#39;</span><span class="p">,</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Temperature&#39;</span><span class="p">]),</span>
-            <span class="s1">&#39;Salinity&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;pressure&#39;</span><span class="p">,</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Salinity&#39;</span><span class="p">]),</span>
-        <span class="p">}</span> 
-    <span class="p">)</span>
-
-    <span class="c1"># Add attributes to make it CF-compliant</span>
-    <span class="n">xrds</span><span class="p">[</span><span class="s1">&#39;Temperature&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s1">&#39;standard_name&#39;</span><span class="p">:</span> <span class="s1">&#39;sea_water_temperature&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;long_name&#39;</span><span class="p">:</span> <span class="s1">&#39;Temperature of sea water&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;degrees_Celsius&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;coverage_content_type&#39;</span><span class="p">:</span> <span class="s1">&#39;physicalMeasurement&#39;</span>
-    <span class="p">}</span>
-    <span class="n">xrds</span><span class="p">[</span><span class="s1">&#39;Salinity&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s1">&#39;standard_name&#39;</span><span class="p">:</span> <span class="s1">&#39;sea_water_salinity&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;long_name&#39;</span><span class="p">:</span> <span class="s1">&#39;Salinity of sea water&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;PSU&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;coverage_content_type&#39;</span><span class="p">:</span> <span class="s1">&#39;physicalMeasurement&#39;</span>
-    <span class="p">}</span>
-    <span class="n">xrds</span><span class="p">[</span><span class="s1">&#39;pressure&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s1">&#39;standard_name&#39;</span><span class="p">:</span> <span class="s1">&#39;sea_water_pressure&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;long_name&#39;</span><span class="p">:</span> <span class="s1">&#39;Sea water pressure&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;dbar&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;coverage_content_type&#39;</span><span class="p">:</span> <span class="s1">&#39;coordinate&#39;</span>
-    <span class="p">}</span>
-    
-    <span class="nb">print</span><span class="p">(</span><span class="n">xrds</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
-    <span class="c1"># xrds.to_netcdf(&#39;/path/to/your/depth_profile.nc&#39;)</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Opened </span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>    
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;xarray.Dataset&gt;
-Dimensions:      (pressure: 10)
-Coordinates:
-  * pressure     (pressure) float64 53.81 72.04 34.82 ... 58.14 66.28 91.99
-Data variables:
-    Temperature  (pressure) float64 6.481 17.95 19.32 ... 21.87 4.615 22.82
-    Salinity     (pressure) float64 30.77 33.48 33.24 36.12 ... 30.02 36.6 35.63 
-
-&lt;xarray.Dataset&gt;
-Dimensions:      (pressure: 10)
-Coordinates:
-  * pressure     (pressure) float64 57.38 66.62 0.6772 ... 84.83 64.44 72.7
-Data variables:
-    Temperature  (pressure) float64 21.42 21.71 14.4 9.453 ... 27.34 18.14 13.12
-    Salinity     (pressure) float64 36.21 30.26 30.89 ... 31.81 38.79 38.87 
-
-&lt;xarray.Dataset&gt;
-Dimensions:      (pressure: 10)
-Coordinates:
-  * pressure     (pressure) float64 20.04 11.64 8.974 ... 86.67 13.92 7.189
-Data variables:
-    Temperature  (pressure) float64 15.05 13.42 16.91 ... 20.75 23.64 26.98
-    Salinity     (pressure) float64 35.75 33.13 35.69 ... 33.58 39.87 34.38 
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Opened data/csv_files/depth_profile_S8.csv
+Opened data/csv_files/depth_profile_S5.csv
+Opened data/csv_files/depth_profile_S6.csv
+Opened data/csv_files/depth_profile_S1.csv
+Opened data/csv_files/depth_profile_S3.csv
+Opened data/csv_files/depth_profile_S4.csv
+Opened data/csv_files/depth_profile_S7.csv
+Opened data/csv_files/depth_profile_S2.csv
 </pre></div>
 </div>
 </div>
 </div>
-<p>But there is a problem. In the example above, we are giving each NetCDF file the same file name. Therefore, we will just create the file during the first loop and then overwrite it with each loop that follows.</p>
-<p>To assign a different file name for each NetCDF file, we need to include a variable in the filename.</p>
-<p>We also need to assign a different set of global attributes for each file - though some attributes will be the same.</p>
+<p>To assign a different file name for each NetCDF file, we need to include a variable in the filename that is different for each loop iteration - perhaps some function of the input filename.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">files</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;file1.csv&#39;</span><span class="p">,</span><span class="s1">&#39;file2.csv&#39;</span><span class="p">,</span><span class="s1">&#39;file3.csv&#39;</span><span class="p">]</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">folder_path</span> <span class="o">=</span> <span class="s1">&#39;data/csv_files/&#39;</span> <span class="c1"># Path to the folder containing CSV files</span>
+<span class="n">files</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">folder_path</span> <span class="o">+</span> <span class="s1">&#39;*.csv&#39;</span><span class="p">)</span> <span class="c1"># Get a list of file paths for all CSV files in the folder</span>
 
-<span class="c1"># Side car file? Information in headers? Perhaps need examples in the data folder.</span>
+<span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>    
+    <span class="n">station</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">station</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>S8
+S5
+S6
+S1
+S3
+S4
+S7
+S2
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="different-global-attributes-for-each-netcdf-file">
+<h2>Different global attributes for each NetCDF file<a class="headerlink" href="#different-global-attributes-for-each-netcdf-file" title="Permalink to this heading">#</a></h2>
+<p>What about the global attributes? Some attributes might be the same for every file, like the creator and publisher details. However, other attributes will be different for each file.</p>
+<p>We are going to store the metadata in a separate file and load it in. Here are 3 examples - go and look at the files themselves if you want to create your own.</p>
+<section id="json">
+<h3>JSON:<a class="headerlink" href="#json" title="Permalink to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Read the JSON file</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;data/metadata_files/depth_profiles_metadata.json&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">json_file</span><span class="p">:</span>
+    <span class="n">metadata</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">json_file</span><span class="p">)</span>
+    
+<span class="c1"># The data are loaded into a Python dictionary that you can easily access.</span>
+<span class="k">for</span> <span class="n">station</span><span class="p">,</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">metadata</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Station: </span><span class="si">{</span><span class="n">station</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Latitude: </span><span class="si">{</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;latitude&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Station: S1
+Latitude: 27.125
+Station: S2
+Latitude: 27.128
+Station: S3
+Latitude: 27.123
+Station: S4
+Latitude: 27.126
+Station: S5
+Latitude: 27.122
+Station: S6
+Latitude: 27.124
+Station: S7
+Latitude: 27.127
+Station: S8
+Latitude: 27.125
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="yaml">
+<h3>YAML<a class="headerlink" href="#yaml" title="Permalink to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Read the YAML file</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;data/metadata_files/depth_profiles_metadata.json&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">yaml_file</span><span class="p">:</span>
+    <span class="n">metadata</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">yaml_file</span><span class="p">)</span>
 
-<span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
-    <span class="c1"># df = pd.read_csv(file)</span>
+<span class="c1"># The data are loaded into a Python dictionary that you can easily access.</span>
+<span class="k">for</span> <span class="n">station</span><span class="p">,</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">metadata</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Station: </span><span class="si">{</span><span class="n">station</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Latitude: </span><span class="si">{</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;latitude&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Station: S1
+Latitude: 27.125
+Station: S2
+Latitude: 27.128
+Station: S3
+Latitude: 27.123
+Station: S4
+Latitude: 27.126
+Station: S5
+Latitude: 27.122
+Station: S6
+Latitude: 27.124
+Station: S7
+Latitude: 27.127
+Station: S8
+Latitude: 27.125
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="csv">
+<h3>CSV<a class="headerlink" href="#csv" title="Permalink to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Read the CSV file into a pandas DataFrame</span>
+<span class="n">metadata_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;data/metadata_files/depth_profiles_metadata.csv&#39;</span><span class="p">)</span>
+
+<span class="c1"># Loop through each row in the DataFrame</span>
+<span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">metadata_df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Station: </span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;Station&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Latitude: </span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;latitude&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Station: S1
+Latitude: 27.125
+Station: S2
+Latitude: 27.128
+Station: S3
+Latitude: 27.123
+Station: S4
+Latitude: 27.126
+Station: S5
+Latitude: 27.122
+Station: S6
+Latitude: 27.124
+Station: S7
+Latitude: 27.127
+Station: S8
+Latitude: 27.125
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="looping-through-the-data-and-global-attributes-at-the-same-time">
+<h2>Looping through the data and global attributes at the same time<a class="headerlink" href="#looping-through-the-data-and-global-attributes-at-the-same-time" title="Permalink to this heading">#</a></h2>
+<p>We need to loop through both the data files and the files containing the global attributes at the same time. The key here is to have something that links the two. In this case, we have the station name in the data file name and in the global attributes metadata files.</p>
+<p>In this case we will proceed with the YAML file, but hopefully you can incorporate the code below yourself if you would rather work with JSON or CSV files.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Read the YAML file</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;data/metadata_files/depth_profiles_metadata.json&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">yaml_file</span><span class="p">:</span>
+    <span class="n">metadata</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">yaml_file</span><span class="p">)</span>
     
-    <span class="c1"># Since we don&#39;t have the files here, let&#39;s create dummy profiles instead.</span>
-    <span class="n">pressures</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>  <span class="c1"># 10 Random pressures between 0 and 100</span>
-    <span class="n">temperatures</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>  <span class="c1"># Random temperatures between 2°C and 30°C</span>
-    <span class="n">salinities</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>  <span class="c1"># Random salinity between 30 and 40 PSU</span>
+<span class="n">data_files</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">folder_path</span> <span class="o">+</span> <span class="s1">&#39;*.csv&#39;</span><span class="p">)</span> <span class="c1"># Get a list of file paths for all the data files in the folder</span>
+
+<span class="k">for</span> <span class="n">data_file</span> <span class="ow">in</span> <span class="n">data_files</span><span class="p">:</span> <span class="c1"># Looping through each data file</span>
+    <span class="n">data_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">data_file</span><span class="p">)</span>
+    <span class="n">station</span> <span class="o">=</span> <span class="n">data_file</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># Extracting the station name from the file path</span>
     
-    <span class="c1"># Creating a DataFrame for the depth profile</span>
-    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
-        <span class="s1">&#39;Pressure&#39;</span><span class="p">:</span> <span class="n">pressures</span><span class="p">,</span>
-        <span class="s1">&#39;Temperature&#39;</span><span class="p">:</span> <span class="n">temperatures</span><span class="p">,</span>
-        <span class="s1">&#39;Salinity&#39;</span><span class="p">:</span> <span class="n">salinities</span>
-    <span class="p">})</span>
+    <span class="n">metadata_station</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="n">station</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">metadata_station</span><span class="p">)</span>    
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;latitude&#39;: 27.125, &#39;longitude&#39;: 29.999, &#39;timestamp&#39;: &#39;2023-06-15T11:05:00Z&#39;, &#39;id&#39;: &#39;e4c040e2-1506-4099-85f1-99e0e47244f7&#39;}
+{&#39;latitude&#39;: 27.122, &#39;longitude&#39;: 29.996, &#39;timestamp&#39;: &#39;2023-06-15T10:50:00Z&#39;, &#39;id&#39;: &#39;d8eb21f2-43a6-4b18-9c6c-8f8b30051718&#39;}
+{&#39;latitude&#39;: 27.124, &#39;longitude&#39;: 29.994, &#39;timestamp&#39;: &#39;2023-06-15T10:55:00Z&#39;, &#39;id&#39;: &#39;9b4e0d0a-51d9-4d5b-a144-0a8c97cc1181&#39;}
+{&#39;latitude&#39;: 27.125, &#39;longitude&#39;: 29.995, &#39;timestamp&#39;: &#39;2023-06-15T10:30:00Z&#39;, &#39;id&#39;: &#39;3b89f178-8c48-4fc4-ae7d-27e2f4c6d9e1&#39;}
+{&#39;latitude&#39;: 27.123, &#39;longitude&#39;: 29.997, &#39;timestamp&#39;: &#39;2023-06-15T10:40:00Z&#39;, &#39;id&#39;: &#39;a43de701-3bfe-4c7e-a78b-1d87a9af1122&#39;}
+{&#39;latitude&#39;: 27.126, &#39;longitude&#39;: 29.993, &#39;timestamp&#39;: &#39;2023-06-15T10:45:00Z&#39;, &#39;id&#39;: &#39;f7a6c89d-4c3e-4a94-8e9a-04a7f8f43d6c&#39;}
+{&#39;latitude&#39;: 27.127, &#39;longitude&#39;: 29.995, &#39;timestamp&#39;: &#39;2023-06-15T11:00:00Z&#39;, &#39;id&#39;: &#39;5f2c68c1-68d7-4d3b-aa2b-254c73e4b59e&#39;}
+{&#39;latitude&#39;: 27.128, &#39;longitude&#39;: 29.998, &#39;timestamp&#39;: &#39;2023-06-15T10:35:00Z&#39;, &#39;id&#39;: &#39;cc29745a-925b-45d0-8b88-ce967322b6c4&#39;}
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="creating-multiple-cf-netcdf-files">
+<h2>Creating multiple CF-NetCDF files<a class="headerlink" href="#creating-multiple-cf-netcdf-files" title="Permalink to this heading">#</a></h2>
+<p>Now let’s put all of this together to create our NetCDF files.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Read the YAML file</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;data/metadata_files/depth_profiles_metadata.json&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">yaml_file</span><span class="p">:</span>
+    <span class="n">metadata</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">yaml_file</span><span class="p">)</span>
+    
+<span class="n">data_files</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">folder_path</span> <span class="o">+</span> <span class="s1">&#39;*.csv&#39;</span><span class="p">)</span> <span class="c1"># Get a list of file paths for all the data files in the folder</span>
+
+<span class="k">for</span> <span class="n">data_file</span> <span class="ow">in</span> <span class="n">data_files</span><span class="p">:</span> <span class="c1"># Looping through each data file</span>
+    <span class="n">data_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">data_file</span><span class="p">)</span>
+    <span class="n">station</span> <span class="o">=</span> <span class="n">data_file</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># Extracting the station name from the file path</span>
+    
+    <span class="n">metadata_station</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="n">station</span><span class="p">]</span>
     
     <span class="c1"># Create an xarray dataset from the dataframe</span>
     <span class="n">xrds</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">(</span>
         <span class="n">coords</span><span class="o">=</span><span class="p">{</span>
-            <span class="s1">&#39;pressure&#39;</span><span class="p">:</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Pressure&#39;</span><span class="p">]</span>
+            <span class="s1">&#39;pressure&#39;</span><span class="p">:</span> <span class="n">data_df</span><span class="p">[</span><span class="s1">&#39;Pressure&#39;</span><span class="p">]</span>
         <span class="p">},</span>
         <span class="n">data_vars</span><span class="o">=</span><span class="p">{</span>
-            <span class="s1">&#39;Temperature&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;pressure&#39;</span><span class="p">,</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Temperature&#39;</span><span class="p">]),</span>
-            <span class="s1">&#39;Salinity&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;pressure&#39;</span><span class="p">,</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Salinity&#39;</span><span class="p">]),</span>
+            <span class="s1">&#39;Temperature&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;pressure&#39;</span><span class="p">,</span> <span class="n">data_df</span><span class="p">[</span><span class="s1">&#39;Temperature&#39;</span><span class="p">]),</span>
+            <span class="s1">&#39;Salinity&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;pressure&#39;</span><span class="p">,</span> <span class="n">data_df</span><span class="p">[</span><span class="s1">&#39;Salinity&#39;</span><span class="p">]),</span>
         <span class="p">}</span> 
     <span class="p">)</span>
 
-    <span class="c1"># Add attributes to make it CF-compliant</span>
+    <span class="c1"># Add variable attributes</span>
     <span class="n">xrds</span><span class="p">[</span><span class="s1">&#39;Temperature&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s1">&#39;standard_name&#39;</span><span class="p">:</span> <span class="s1">&#39;sea_water_temperature&#39;</span><span class="p">,</span>
         <span class="s1">&#39;long_name&#39;</span><span class="p">:</span> <span class="s1">&#39;Temperature of sea water&#39;</span><span class="p">,</span>
@@ -1082,23 +1173,22 @@ Data variables:
         <span class="s1">&#39;coverage_content_type&#39;</span><span class="p">:</span> <span class="s1">&#39;coordinate&#39;</span>
     <span class="p">}</span>
     
-    <span class="c1"># Get the current timestamp in UTC and format it in ISO8601 - different for each file</span>
+    <span class="c1"># Get the current timestamp in UTC and format it in ISO8601</span>
     <span class="n">time_now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">T%H:%M:%SZ&#39;</span><span class="p">)</span>
     
-    <span class="c1"># Global attributes including variables to vary them for each loop (and each NetCDF file)</span>
     <span class="n">xrds</span><span class="o">.</span><span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">your_id</span><span class="p">,</span>
+        <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">metadata_station</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span>
         <span class="s1">&#39;naming_authority&#39;</span><span class="p">:</span> <span class="s1">&#39;institution that provides the id&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;Depth Profile Data from </span><span class="si">{</span><span class="n">station_name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;summary&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;This dataset contains depth profiles of temperature and salinity measurements from </span><span class="si">{</span><span class="n">station_name</span><span class="si">}</span><span class="s1">.&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;Depth Profile Data&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;summary&#39;</span><span class="p">:</span> <span class="s1">&#39;This dataset contains depth profiles of temperature and salinity measurements.&#39;</span><span class="p">,</span>
         <span class="s1">&#39;keywords&#39;</span><span class="p">:</span> <span class="s1">&#39;sea_water_temperature, sea_water_salinity&#39;</span><span class="p">,</span>
         <span class="s1">&#39;keywords_vocabulary&#39;</span><span class="p">:</span> <span class="s1">&#39;CF:NetCDF COARDS Climate and Forecast Standard Names&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;geospatial_lat_min&#39;</span><span class="p">:</span> <span class="n">latitude</span><span class="p">,</span>
-        <span class="s1">&#39;geospatial_lat_max&#39;</span><span class="p">:</span> <span class="n">latitude</span><span class="p">,</span>
-        <span class="s1">&#39;geospatial_lon_min&#39;</span><span class="p">:</span> <span class="n">longitude</span><span class="p">,</span>
-        <span class="s1">&#39;geospatial_lon_max&#39;</span><span class="p">:</span> <span class="n">longitude</span><span class="p">,</span>
-        <span class="s1">&#39;time_coverage_start&#39;</span><span class="p">:</span> <span class="n">timestamp_collected_iso8601</span><span class="p">,</span>
-        <span class="s1">&#39;time_coverage_end&#39;</span><span class="p">:</span> <span class="n">timestamp_collected_iso8601</span><span class="p">,</span>
+        <span class="s1">&#39;geospatial_lat_min&#39;</span><span class="p">:</span> <span class="n">metadata_station</span><span class="p">[</span><span class="s1">&#39;latitude&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;geospatial_lat_max&#39;</span><span class="p">:</span> <span class="n">metadata_station</span><span class="p">[</span><span class="s1">&#39;latitude&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;geospatial_lon_min&#39;</span><span class="p">:</span> <span class="n">metadata_station</span><span class="p">[</span><span class="s1">&#39;longitude&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;geospatial_lon_max&#39;</span><span class="p">:</span> <span class="n">metadata_station</span><span class="p">[</span><span class="s1">&#39;longitude&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;time_coverage_start&#39;</span><span class="p">:</span> <span class="n">metadata_station</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;time_coverage_end&#39;</span><span class="p">:</span> <span class="n">metadata_station</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">],</span>
         <span class="s1">&#39;Conventions&#39;</span><span class="p">:</span> <span class="s1">&#39;ACDD-1.3, CF-1.11&#39;</span><span class="p">,</span>
         <span class="s1">&#39;history&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">time_now</span><span class="si">}</span><span class="s1">: Modified by YourName using Python&#39;</span><span class="p">,</span>
         <span class="s1">&#39;source&#39;</span><span class="p">:</span> <span class="s1">&#39;Measurement&#39;</span><span class="p">,</span>
@@ -1118,26 +1208,14 @@ Data variables:
         <span class="s1">&#39;instrument_vocabulary&#39;</span><span class="p">:</span> <span class="s1">&#39;http://vocab.nerc.ac.uk/collection/L22/current/TOOL0001/&#39;</span><span class="p">,</span>
         <span class="s1">&#39;license&#39;</span><span class="p">:</span> <span class="s1">&#39;https://creativecommons.org/licenses/by/4.0/&#39;</span><span class="p">,</span>
         <span class="s1">&#39;featureType&#39;</span><span class="p">:</span> <span class="s1">&#39;profile&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;station_name&#39;</span><span class="p">:</span> <span class="n">station_name</span> <span class="c1"># Custom attribute, but you can add any attribute you like alongside the minimum requirements.</span>
+        <span class="s1">&#39;station_name&#39;</span><span class="p">:</span> <span class="n">station</span> <span class="c1"># Custom attribute, but you can add any attribute you like alongside the minimum requirements.</span>
     <span class="p">}</span>
     
-    <span class="n">filename</span> <span class="o">=</span> 
-    <span class="c1"># xrds.to_netcdf(f&#39;/path/to/your/{filename}.nc&#39;)</span>
-    
-    
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span>  <span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">6</span><span class="p">],</span> <span class="n">line</span> <span class="mi">90</span>
-    <span class="n">filename</span> <span class="o">=</span>
-               <span class="o">^</span>
-<span class="ne">SyntaxError</span>: invalid syntax
+    <span class="n">xrds</span><span class="o">.</span><span class="n">to_netcdf</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;data/netcdf_files/06_depth_profile_</span><span class="si">{</span><span class="n">station</span><span class="si">}</span><span class="s1">.nc&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
-</section>
 </section>
 </section>
 
@@ -1172,12 +1250,12 @@ Data variables:
                   <!-- Previous / next buttons -->
 <div class="prev-next-area">
     <a class="left-prev"
-       href="04_creating_a_cfnetcdf_file.html"
+       href="05_how_to_structure_your_NetCDF_file_or_files.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Creating a CF-NetCDF file</p>
+        <p class="prev-next-title">05: How to structure you NetCDF file or files</p>
       </div>
     </a>
     <a class="right-next"
@@ -1204,11 +1282,17 @@ Data variables:
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-for-1-depth-profile">Example for 1 depth profile</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-multiple-files-using-a-for-loop">Creating multiple files using a for loop</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tabular-file-per-depth-profile">1 tabular file per depth profile</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-refresh-of-how-to-create-a-single-netcdf-file">A refresh of how to create a single NetCDF file</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-quick-introduction-to-for-loops">A quick introduction to for loops</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#looping-through-csv-files-that-contain-your-data">Looping through CSV files that contain your data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#different-global-attributes-for-each-netcdf-file">Different global attributes for each NetCDF file</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#json">JSON:</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#yaml">YAML</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#csv">CSV</a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#looping-through-the-data-and-global-attributes-at-the-same-time">Looping through the data and global attributes at the same time</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-multiple-cf-netcdf-files">Creating multiple CF-NetCDF files</a></li>
 </ul>
   </nav></div>
 

@@ -1,0 +1,6 @@
+
+		begin
+      f = addfile("/home/lukem/Documents/MET/Git_repos/NetCDF_in_Python_from_beginner_to_pro/data/netcdf_files/06_depth_profile_S1.nc","r")
+      print(f)
+		end
+    

@@ -1,0 +1,40 @@
+S1:
+  latitude: 27.125
+  longitude: 29.995
+  timestamp: '2023-06-15T10:30:00Z'
+  id: 3b89f178-8c48-4fc4-ae7d-27e2f4c6d9e1
+S2:
+  latitude: 27.128
+  longitude: 29.998
+  timestamp: '2023-06-15T10:35:00Z'
+  id: cc29745a-925b-45d0-8b88-ce967322b6c4
+S3:
+  latitude: 27.123
+  longitude: 29.997
+  timestamp: '2023-06-15T10:40:00Z'
+  id: a43de701-3bfe-4c7e-a78b-1d87a9af1122
+S4:
+  latitude: 27.126
+  longitude: 29.993
+  timestamp: '2023-06-15T10:45:00Z'
+  id: f7a6c89d-4c3e-4a94-8e9a-04a7f8f43d6c
+S5:
+  latitude: 27.122
+  longitude: 29.996
+  timestamp: '2023-06-15T10:50:00Z'
+  id: d8eb21f2-43a6-4b18-9c6c-8f8b30051718
+S6:
+  latitude: 27.124
+  longitude: 29.994
+  timestamp: '2023-06-15T10:55:00Z'
+  id: 9b4e0d0a-51d9-4d5b-a144-0a8c97cc1181
+S7:
+  latitude: 27.127
+  longitude: 29.995
+  timestamp: '2023-06-15T11:00:00Z'
+  id: 5f2c68c1-68d7-4d3b-aa2b-254c73e4b59e
+S8:
+  latitude: 27.125
+  longitude: 29.999
+  timestamp: '2023-06-15T11:05:00Z'
+  id: e4c040e2-1506-4099-85f1-99e0e47244f7
