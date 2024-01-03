@@ -1,8 +1,8 @@
 # Book settings
 # Learn more at https://jupyterbook.org/customize/config.html
 
-title: My sample book
-author: The Jupyter Book Community
+title: NetCDF in Python - from beginner to pro
+author: Luke Marsden
 logo: logo.png
 
 # Force re-execution of notebooks on each build.
@@ -13,7 +13,7 @@ execute:
 # Define the name of the latex output file for PDF builds
 latex:
   latex_documents:
-    targetname: book.tex
+    targetname: NetCDF_in_Python_from_beginner_to_pro.tex
 
 # Add a bibtex file so that we can create citations
 bibtex_bibfiles:
