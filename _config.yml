@@ -15,10 +15,6 @@ latex:
   latex_documents:
     targetname: NetCDF_in_Python_from_beginner_to_pro.tex
 
-# Add a bibtex file so that we can create citations
-bibtex_bibfiles:
-  - ref.bib
-
 # Information about where the book exists on the web
 repository:
   url: https://github.com/executablebooks/jupyter-book  # Online location of your book

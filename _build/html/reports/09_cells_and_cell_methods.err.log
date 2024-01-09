@@ -21,8 +21,25 @@ Traceback (most recent call last):
     raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
 nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
 ------------------
-times = []
-latitudes = [36]
+import numpy as np
+
+latitudes = np.arange(58, 62.1, 0.1)
+longitudes = np.arange(9, 13, 0.1)
+timestamps_hours = [
+    datetime.datetime(2023, 6, 11, 0, 0, 0),
+    datetime.datetime(2023, 6, 12, 0, 0, 0),
+    datetime.datetime(2023, 6, 13, 0, 0, 0),
+    datetime.datetime(2023, 6, 14, 0, 0, 0),
+    datetime.datetime(2023, 6, 15, 0, 0, 0),
+    datetime.datetime(2023, 6, 16, 0, 0, 0)
+]
+
+num_latitudes = len(latitudes)
+num_longitudes = len(longitudes)
+num_timestamps = len(timestamps_hours)
+
+# Generating random wind speeds (assuming a range of 0 to 5 m/s for demonstration purposes)
+mean_wind_speeds = np.random.rand(num_latitudes, num_longitudes, num_timestamps) * 5
 
 xrds = xr.Dataset(
     coords={
@@ -38,10 +55,10 @@ xrds = xr.Dataset(
 xrds = xrds.expand_dims(nv=2)
 ------------------
 
-[0;36m  Cell [0;32mIn[10], line 8[0;36m[0m
+[0;36m  Cell [0;32mIn[10], line 25[0;36m[0m
 [0;31m    'longitude', longitudes[0m
 [0m              ^[0m
 [0;31mSyntaxError[0m[0;31m:[0m ':' expected after dictionary key
 
-SyntaxError: ':' expected after dictionary key (2247356260.py, line 8)
+SyntaxError: ':' expected after dictionary key (1829761282.py, line 25)
 
