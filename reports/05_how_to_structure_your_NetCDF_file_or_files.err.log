@@ -1,0 +1,98 @@
+Traceback (most recent call last):
+  File "/home/lukem/anaconda3/lib/python3.11/site-packages/jupyter_cache/executors/utils.py", line 58, in single_nb_execution
+    executenb(
+  File "/home/lukem/anaconda3/lib/python3.11/site-packages/nbclient/client.py", line 1305, in execute
+    return NotebookClient(nb=nb, resources=resources, km=km, **kwargs).execute()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/lukem/anaconda3/lib/python3.11/site-packages/jupyter_core/utils/__init__.py", line 173, in wrapped
+    return loop.run_until_complete(inner)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/lukem/anaconda3/lib/python3.11/asyncio/base_events.py", line 653, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/lukem/anaconda3/lib/python3.11/site-packages/nbclient/client.py", line 705, in async_execute
+    await self.async_execute_cell(
+  File "/home/lukem/anaconda3/lib/python3.11/site-packages/nbclient/client.py", line 1058, in async_execute_cell
+    await self._check_raise_for_error(cell, cell_index, exec_reply)
+  File "/home/lukem/anaconda3/lib/python3.11/site-packages/nbclient/client.py", line 914, in _check_raise_for_error
+    raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
+nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
+------------------
+latitude = [78.5142,79.2833,79.9840]
+longitude = [30.4231,30.3591,30.4994, 30.4200]
+
+xrds = xr.Dataset(
+    coords = {
+        'depth': depth,
+        'time': time
+    },
+    data_vars = {
+        'sea_water_temperature': (['time','depth'],temperature_2d),
+        'latitude': ('time', latitude),
+        'longitude': ('time', longitude)
+    }
+)
+------------------
+
+
+[0;31m---------------------------------------------------------------------------[0m
+[0;31mValueError[0m                                Traceback (most recent call last)
+Cell [0;32mIn[9], line 4[0m
+[1;32m      1[0m latitude [38;5;241m=[39m [[38;5;241m78.5142[39m,[38;5;241m79.2833[39m,[38;5;241m79.9840[39m]
+[1;32m      2[0m longitude [38;5;241m=[39m [[38;5;241m30.4231[39m,[38;5;241m30.3591[39m,[38;5;241m30.4994[39m, [38;5;241m30.4200[39m]
+[0;32m----> 4[0m xrds [38;5;241m=[39m xr[38;5;241m.[39mDataset(
+[1;32m      5[0m     coords [38;5;241m=[39m {
+[1;32m      6[0m         [38;5;124m'[39m[38;5;124mdepth[39m[38;5;124m'[39m: depth,
+[1;32m      7[0m         [38;5;124m'[39m[38;5;124mtime[39m[38;5;124m'[39m: time
+[1;32m      8[0m     },
+[1;32m      9[0m     data_vars [38;5;241m=[39m {
+[1;32m     10[0m         [38;5;124m'[39m[38;5;124msea_water_temperature[39m[38;5;124m'[39m: ([[38;5;124m'[39m[38;5;124mtime[39m[38;5;124m'[39m,[38;5;124m'[39m[38;5;124mdepth[39m[38;5;124m'[39m],temperature_2d),
+[1;32m     11[0m         [38;5;124m'[39m[38;5;124mlatitude[39m[38;5;124m'[39m: ([38;5;124m'[39m[38;5;124mtime[39m[38;5;124m'[39m, latitude),
+[1;32m     12[0m         [38;5;124m'[39m[38;5;124mlongitude[39m[38;5;124m'[39m: ([38;5;124m'[39m[38;5;124mtime[39m[38;5;124m'[39m, longitude)
+[1;32m     13[0m     }
+[1;32m     14[0m )
+
+File [0;32m~/anaconda3/lib/python3.11/site-packages/xarray/core/dataset.py:694[0m, in [0;36mDataset.__init__[0;34m(self, data_vars, coords, attrs)[0m
+[1;32m    691[0m [38;5;28;01mif[39;00m [38;5;28misinstance[39m(coords, Dataset):
+[1;32m    692[0m     coords [38;5;241m=[39m coords[38;5;241m.[39m_variables
+[0;32m--> 694[0m variables, coord_names, dims, indexes, _ [38;5;241m=[39m merge_data_and_coords(
+[1;32m    695[0m     data_vars, coords
+[1;32m    696[0m )
+[1;32m    698[0m [38;5;28mself[39m[38;5;241m.[39m_attrs [38;5;241m=[39m [38;5;28mdict[39m(attrs) [38;5;28;01mif[39;00m attrs [38;5;129;01mis[39;00m [38;5;129;01mnot[39;00m [38;5;28;01mNone[39;00m [38;5;28;01melse[39;00m [38;5;28;01mNone[39;00m
+[1;32m    699[0m [38;5;28mself[39m[38;5;241m.[39m_close [38;5;241m=[39m [38;5;28;01mNone[39;00m
+
+File [0;32m~/anaconda3/lib/python3.11/site-packages/xarray/core/dataset.py:423[0m, in [0;36mmerge_data_and_coords[0;34m(data_vars, coords)[0m
+[1;32m    419[0m     coords [38;5;241m=[39m create_coords_with_default_indexes(coords, data_vars)
+[1;32m    421[0m [38;5;66;03m# exclude coords from alignment (all variables in a Coordinates object should[39;00m
+[1;32m    422[0m [38;5;66;03m# already be aligned together) and use coordinates' indexes to align data_vars[39;00m
+[0;32m--> 423[0m [38;5;28;01mreturn[39;00m merge_core(
+[1;32m    424[0m     [data_vars, coords],
+[1;32m    425[0m     compat[38;5;241m=[39m[38;5;124m"[39m[38;5;124mbroadcast_equals[39m[38;5;124m"[39m,
+[1;32m    426[0m     join[38;5;241m=[39m[38;5;124m"[39m[38;5;124mouter[39m[38;5;124m"[39m,
+[1;32m    427[0m     explicit_coords[38;5;241m=[39m[38;5;28mtuple[39m(coords),
+[1;32m    428[0m     indexes[38;5;241m=[39mcoords[38;5;241m.[39mxindexes,
+[1;32m    429[0m     priority_arg[38;5;241m=[39m[38;5;241m1[39m,
+[1;32m    430[0m     skip_align_args[38;5;241m=[39m[[38;5;241m1[39m],
+[1;32m    431[0m )
+
+File [0;32m~/anaconda3/lib/python3.11/site-packages/xarray/core/merge.py:724[0m, in [0;36mmerge_core[0;34m(objects, compat, join, combine_attrs, priority_arg, explicit_coords, indexes, fill_value, skip_align_args)[0m
+[1;32m    719[0m prioritized [38;5;241m=[39m _get_priority_vars_and_indexes(aligned, priority_arg, compat[38;5;241m=[39mcompat)
+[1;32m    720[0m variables, out_indexes [38;5;241m=[39m merge_collected(
+[1;32m    721[0m     collected, prioritized, compat[38;5;241m=[39mcompat, combine_attrs[38;5;241m=[39mcombine_attrs
+[1;32m    722[0m )
+[0;32m--> 724[0m dims [38;5;241m=[39m calculate_dimensions(variables)
+[1;32m    726[0m coord_names, noncoord_names [38;5;241m=[39m determine_coords(coerced)
+[1;32m    727[0m [38;5;28;01mif[39;00m compat [38;5;241m==[39m [38;5;124m"[39m[38;5;124mminimal[39m[38;5;124m"[39m:
+[1;32m    728[0m     [38;5;66;03m# coordinates may be dropped in merged results[39;00m
+
+File [0;32m~/anaconda3/lib/python3.11/site-packages/xarray/core/variable.py:3008[0m, in [0;36mcalculate_dimensions[0;34m(variables)[0m
+[1;32m   3006[0m             last_used[dim] [38;5;241m=[39m k
+[1;32m   3007[0m         [38;5;28;01melif[39;00m dims[dim] [38;5;241m!=[39m size:
+[0;32m-> 3008[0m             [38;5;28;01mraise[39;00m [38;5;167;01mValueError[39;00m(
+[1;32m   3009[0m                 [38;5;124mf[39m[38;5;124m"[39m[38;5;124mconflicting sizes for dimension [39m[38;5;132;01m{[39;00mdim[38;5;132;01m!r}[39;00m[38;5;124m: [39m[38;5;124m"[39m
+[1;32m   3010[0m                 [38;5;124mf[39m[38;5;124m"[39m[38;5;124mlength [39m[38;5;132;01m{[39;00msize[38;5;132;01m}[39;00m[38;5;124m on [39m[38;5;132;01m{[39;00mk[38;5;132;01m!r}[39;00m[38;5;124m and length [39m[38;5;132;01m{[39;00mdims[dim][38;5;132;01m}[39;00m[38;5;124m on [39m[38;5;132;01m{[39;00mlast_used[38;5;132;01m!r}[39;00m[38;5;124m"[39m
+[1;32m   3011[0m             )
+[1;32m   3012[0m [38;5;28;01mreturn[39;00m dims
+
+[0;31mValueError[0m: conflicting sizes for dimension 'time': length 3 on 'latitude' and length 4 on {'time': 'sea_water_temperature', 'depth': 'sea_water_temperature'}
+

@@ -1,0 +1,1347 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>06: Creating multiple CF-NetCDF files in one go &#8212; NetCDF in Python - from beginner to pro</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=365ca57ee442770a23c6" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=365ca57ee442770a23c6" />
+  <script src="_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=365ca57ee442770a23c6"></script>
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '06_creating_multiple_cfnetcdf_files_in_one_go';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="07: Combining data from multiple netcdf files" href="07_combing_data_from_multiple_netcdf_files.html" />
+    <link rel="prev" title="05: How to structure you NetCDF file or files" href="05_how_to_structure_your_NetCDF_file_or_files.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+  
+
+<a class="navbar-brand logo" href="intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/logo.png" class="logo__image only-light" alt="NetCDF in Python - from beginner to pro - Home"/>
+    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="NetCDF in Python - from beginner to pro - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="intro.html">
+                    NetCDF in Python: From beginner to pro
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="01_opening_and_understanding.html">01: Opening and understanding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_creating_plots.html">02: Creating Plots</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_extracting_data_to_different_formats.html">03: Extracting data to different formats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_creating_a_cfnetcdf_file.html">04: Creating a CF-NetCDF file</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_how_to_structure_your_NetCDF_file_or_files.html">05: How to structure you NetCDF file or files</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">06: Creating multiple CF-NetCDF files in one go</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07_combing_data_from_multiple_netcdf_files.html">07: Combining data from multiple netcdf files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08_ancillary_variables.html">08: Ancillary variables</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/lhmarsden/NetCDF_in_Python_from_beginner_to_pro" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/lhmarsden/NetCDF_in_Python_from_beginner_to_pro/issues/new?title=Issue%20on%20page%20%2F06_creating_multiple_cfnetcdf_files_in_one_go.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/06_creating_multiple_cfnetcdf_files_in_one_go.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>06: Creating multiple CF-NetCDF files in one go</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-refresh-of-how-to-create-a-single-netcdf-file">A refresh of how to create a single NetCDF file</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-quick-introduction-to-for-loops">A quick introduction to for loops</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#looping-through-csv-files-that-contain-your-data">Looping through CSV files that contain your data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#different-global-attributes-for-each-netcdf-file">Different global attributes for each NetCDF file</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#json">JSON:</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#yaml">YAML</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#csv">CSV</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#looping-through-the-data-and-global-attributes-at-the-same-time">Looping through the data and global attributes at the same time</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-multiple-cf-netcdf-files">Creating multiple CF-NetCDF files</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="creating-multiple-cf-netcdf-files-in-one-go">
+<h1>06: Creating multiple CF-NetCDF files in one go<a class="headerlink" href="#creating-multiple-cf-netcdf-files-in-one-go" title="Permalink to this heading">#</a></h1>
+<p>In some cases, people will choose to break down their data into multiple smaller netcdf files that they will publish in a single data collection. There are a number of good reasons to do this.</p>
+<ul class="simple">
+<li><p>The data user can access only the data they are interested in.</p></li>
+<li><p>Each file can be simpler with potentially less dimensions and less missing values. Imagine you have 10 depth profiles that all sample a different set of depths. If these profiles were included in a single netcdf file, the file would most likely a single depth dimension and coordinate variable which would need to account for all 10 depth profiles. Alternatively, 10 depth dimensions and coordinate variables could be included, but this is considered bad practice.</p></li>
+<li><p>Each individual file can be assigned a separate set of global attributes which describe the data more accurately. For example each file could have global attributes for the coordinates and timestamp. If multiple depth profiles are stored in a single file, only the minimum and maximum coordinates and timestamp can be encoded into the global attributes.</p></li>
+<li><p>Imagine you are looking for data in a data centre. You want to find depth profiles in a certain area of interest on a map. Files that include a single depth profile will be presented as points on the map. Files that include multiple depth profiles will be presented as a bounding box on a map, and without opening up the file it could be unclear whether the file includes data for your area of interest.</p></li>
+</ul>
+<p>One might think that this would involve more work for the data creator and user. However, if the files are similar (and they should be if they follow the CF and ACDD conventions) this is not neccessarily the case.</p>
+<p>In this notebook we will look at we can easily create multiple NetCDF files in one go using Python.</p>
+<p>Imagine you have multiple depth profiles. The two most likely ways your data are structured are:</p>
+<ul class="simple">
+<li><p>1 tabular file per depth profile</p></li>
+<li><p>All profiles in 1 tabular file</p></li>
+</ul>
+<p>In this tutorial we present an example with a 1 tabular file per depth profile. If your data are stored altogether in one file, the first thing you will need to do is separate them. You can do this manually before you start or in your code.</p>
+<section id="a-refresh-of-how-to-create-a-single-netcdf-file">
+<h2>A refresh of how to create a single NetCDF file<a class="headerlink" href="#a-refresh-of-how-to-create-a-single-netcdf-file" title="Permalink to this heading">#</a></h2>
+<p>Let’s start with some code to create one basic CF-NetCDF file.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">import</span> <span class="nn">glob</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">yaml</span>
+
+<span class="c1"># Get the current timestamp in UTC and format it in ISO8601</span>
+<span class="n">time_now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">T%H:%M:%SZ&#39;</span><span class="p">)</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;../data/csv_files/depth_profile_S1.csv&#39;</span><span class="p">)</span>
+
+<span class="c1"># Create an xarray dataset from the dataframe</span>
+<span class="n">xrds</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">(</span>
+    <span class="n">coords</span><span class="o">=</span><span class="p">{</span>
+        <span class="s1">&#39;pressure&#39;</span><span class="p">:</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Pressure&#39;</span><span class="p">]</span>
+    <span class="p">},</span>
+    <span class="n">data_vars</span><span class="o">=</span><span class="p">{</span>
+        <span class="s1">&#39;Temperature&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;pressure&#39;</span><span class="p">,</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Temperature&#39;</span><span class="p">]),</span>
+        <span class="s1">&#39;Salinity&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;pressure&#39;</span><span class="p">,</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Salinity&#39;</span><span class="p">]),</span>
+    <span class="p">}</span> 
+<span class="p">)</span>
+
+<span class="c1"># Add attributes to make it CF-compliant</span>
+<span class="n">xrds</span><span class="p">[</span><span class="s1">&#39;Temperature&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;standard_name&#39;</span><span class="p">:</span> <span class="s1">&#39;sea_water_temperature&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;long_name&#39;</span><span class="p">:</span> <span class="s1">&#39;Temperature of sea water&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;degrees_Celsius&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;coverage_content_type&#39;</span><span class="p">:</span> <span class="s1">&#39;physicalMeasurement&#39;</span>
+<span class="p">}</span>
+<span class="n">xrds</span><span class="p">[</span><span class="s1">&#39;Salinity&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;standard_name&#39;</span><span class="p">:</span> <span class="s1">&#39;sea_water_salinity&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;long_name&#39;</span><span class="p">:</span> <span class="s1">&#39;Salinity of sea water&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;PSU&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;coverage_content_type&#39;</span><span class="p">:</span> <span class="s1">&#39;physicalMeasurement&#39;</span>
+<span class="p">}</span>
+<span class="n">xrds</span><span class="p">[</span><span class="s1">&#39;pressure&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;standard_name&#39;</span><span class="p">:</span> <span class="s1">&#39;sea_water_pressure&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;long_name&#39;</span><span class="p">:</span> <span class="s1">&#39;Sea water pressure&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;dbar&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;coverage_content_type&#39;</span><span class="p">:</span> <span class="s1">&#39;coordinate&#39;</span>
+<span class="p">}</span>
+
+<span class="c1"># Global attributes based on these requirements</span>
+<span class="c1"># https://adc.met.no/node/4</span>
+<span class="c1"># Based on the Attribute Convention for Data Discovery (ACDD) and Climate &amp; Forecast (CF) conventions</span>
+<span class="n">xrds</span><span class="o">.</span><span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="s1">&#39;your_unique_id_here&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;naming_authority&#39;</span><span class="p">:</span> <span class="s1">&#39;institution that provides the id&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;Depth Profile Data&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;summary&#39;</span><span class="p">:</span> <span class="s1">&#39;This dataset contains depth profiles of temperature and salinity measurements.&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;keywords&#39;</span><span class="p">:</span> <span class="s1">&#39;sea_water_temperature, sea_water_salinity&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;keywords_vocabulary&#39;</span><span class="p">:</span> <span class="s1">&#39;CF:NetCDF COARDS Climate and Forecast Standard Names&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;geospatial_lat_min&#39;</span><span class="p">:</span> <span class="mf">80.6713</span><span class="p">,</span>
+    <span class="s1">&#39;geospatial_lat_max&#39;</span><span class="p">:</span> <span class="mf">80.6713</span><span class="p">,</span>
+    <span class="s1">&#39;geospatial_lon_min&#39;</span><span class="p">:</span> <span class="mf">31.2093</span><span class="p">,</span>
+    <span class="s1">&#39;geospatial_lon_max&#39;</span><span class="p">:</span> <span class="mf">31.2093</span><span class="p">,</span>
+    <span class="s1">&#39;time_coverage_start&#39;</span><span class="p">:</span> <span class="s1">&#39;2020-04-26T09:56:00Z&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;time_coverage_end&#39;</span><span class="p">:</span> <span class="s1">&#39;2020-04-26T09:56:00Z&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Conventions&#39;</span><span class="p">:</span> <span class="s1">&#39;ACDD-1.3, CF-1.11&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;history&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">time_now</span><span class="si">}</span><span class="s1">: Modified by YourName using Python&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;source&#39;</span><span class="p">:</span> <span class="s1">&#39;Measurement&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;processing_level&#39;</span><span class="p">:</span> <span class="s1">&#39;Level of processing/quality control&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;date_created&#39;</span><span class="p">:</span> <span class="n">time_now</span><span class="p">,</span>
+    <span class="s1">&#39;creator_type&#39;</span><span class="p">:</span> <span class="s1">&#39;person&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;creator_institution&#39;</span><span class="p">:</span> <span class="s1">&#39;Your Institution&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;creator_name&#39;</span><span class="p">:</span> <span class="s1">&#39;Your Name&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;creator_email&#39;</span><span class="p">:</span> <span class="s1">&#39;your@email.com&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;creator_url&#39;</span><span class="p">:</span> <span class="s1">&#39;your_url_here&#39;</span><span class="p">,</span> <span class="c1"># OrcID is best practice, e.g. https://orcid.org/0000-0002-9746-544X</span>
+    <span class="s1">&#39;institution&#39;</span><span class="p">:</span> <span class="s1">&#39;Your Institution&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;publisher_name&#39;</span><span class="p">:</span> <span class="s1">&#39;Publisher Name&#39;</span><span class="p">,</span> <span class="c1"># Data centre where your data will be published</span>
+    <span class="s1">&#39;publisher_email&#39;</span><span class="p">:</span> <span class="s1">&#39;publisher@email.com&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;publisher_url&#39;</span><span class="p">:</span> <span class="s1">&#39;publisher_url_here&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;project&#39;</span><span class="p">:</span> <span class="s1">&#39;Your Project Name&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;instrument&#39;</span><span class="p">:</span> <span class="s1">&#39;CTD&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;instrument_vocabulary&#39;</span><span class="p">:</span> <span class="s1">&#39;http://vocab.nerc.ac.uk/collection/L22/current/TOOL0001/&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;license&#39;</span><span class="p">:</span> <span class="s1">&#39;https://creativecommons.org/licenses/by/4.0/&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;featureType&#39;</span><span class="p">:</span> <span class="s1">&#39;profile&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;station_name&#39;</span><span class="p">:</span> <span class="s1">&#39;S1&#39;</span> <span class="c1"># Custom attribute, but you can add any attribute you like alongside the minimum requirements.</span>
+<span class="p">}</span>
+
+<span class="c1"># Save the dataset to a NetCDF file</span>
+<span class="n">xrds</span><span class="o">.</span><span class="n">to_netcdf</span><span class="p">(</span><span class="s1">&#39;../data/netcdf_files/06_depth_profile_one_file.nc&#39;</span><span class="p">)</span>
+<span class="n">xrds</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div><svg style="position: absolute; width: 0; height: 0; overflow: hidden">
+<defs>
+<symbol id="icon-database" viewBox="0 0 32 32">
+<path d="M16 0c-8.837 0-16 2.239-16 5v4c0 2.761 7.163 5 16 5s16-2.239 16-5v-4c0-2.761-7.163-5-16-5z"></path>
+<path d="M16 17c-8.837 0-16-2.239-16-5v6c0 2.761 7.163 5 16 5s16-2.239 16-5v-6c0 2.761-7.163 5-16 5z"></path>
+<path d="M16 26c-8.837 0-16-2.239-16-5v6c0 2.761 7.163 5 16 5s16-2.239 16-5v-6c0 2.761-7.163 5-16 5z"></path>
+</symbol>
+<symbol id="icon-file-text2" viewBox="0 0 32 32">
+<path d="M28.681 7.159c-0.694-0.947-1.662-2.053-2.724-3.116s-2.169-2.030-3.116-2.724c-1.612-1.182-2.393-1.319-2.841-1.319h-15.5c-1.378 0-2.5 1.121-2.5 2.5v27c0 1.378 1.122 2.5 2.5 2.5h23c1.378 0 2.5-1.122 2.5-2.5v-19.5c0-0.448-0.137-1.23-1.319-2.841zM24.543 5.457c0.959 0.959 1.712 1.825 2.268 2.543h-4.811v-4.811c0.718 0.556 1.584 1.309 2.543 2.268zM28 29.5c0 0.271-0.229 0.5-0.5 0.5h-23c-0.271 0-0.5-0.229-0.5-0.5v-27c0-0.271 0.229-0.5 0.5-0.5 0 0 15.499-0 15.5 0v7c0 0.552 0.448 1 1 1h7v19.5z"></path>
+<path d="M23 26h-14c-0.552 0-1-0.448-1-1s0.448-1 1-1h14c0.552 0 1 0.448 1 1s-0.448 1-1 1z"></path>
+<path d="M23 22h-14c-0.552 0-1-0.448-1-1s0.448-1 1-1h14c0.552 0 1 0.448 1 1s-0.448 1-1 1z"></path>
+<path d="M23 18h-14c-0.552 0-1-0.448-1-1s0.448-1 1-1h14c0.552 0 1 0.448 1 1s-0.448 1-1 1z"></path>
+</symbol>
+</defs>
+</svg>
+<style>/* CSS stylesheet for displaying xarray objects in jupyterlab.
+ *
+ */
+
+:root {
+  --xr-font-color0: var(--jp-content-font-color0, rgba(0, 0, 0, 1));
+  --xr-font-color2: var(--jp-content-font-color2, rgba(0, 0, 0, 0.54));
+  --xr-font-color3: var(--jp-content-font-color3, rgba(0, 0, 0, 0.38));
+  --xr-border-color: var(--jp-border-color2, #e0e0e0);
+  --xr-disabled-color: var(--jp-layout-color3, #bdbdbd);
+  --xr-background-color: var(--jp-layout-color0, white);
+  --xr-background-color-row-even: var(--jp-layout-color1, white);
+  --xr-background-color-row-odd: var(--jp-layout-color2, #eeeeee);
+}
+
+html[theme=dark],
+body[data-theme=dark],
+body.vscode-dark {
+  --xr-font-color0: rgba(255, 255, 255, 1);
+  --xr-font-color2: rgba(255, 255, 255, 0.54);
+  --xr-font-color3: rgba(255, 255, 255, 0.38);
+  --xr-border-color: #1F1F1F;
+  --xr-disabled-color: #515151;
+  --xr-background-color: #111111;
+  --xr-background-color-row-even: #111111;
+  --xr-background-color-row-odd: #313131;
+}
+
+.xr-wrap {
+  display: block !important;
+  min-width: 300px;
+  max-width: 700px;
+}
+
+.xr-text-repr-fallback {
+  /* fallback to plain text repr when CSS is not injected (untrusted notebook) */
+  display: none;
+}
+
+.xr-header {
+  padding-top: 6px;
+  padding-bottom: 6px;
+  margin-bottom: 4px;
+  border-bottom: solid 1px var(--xr-border-color);
+}
+
+.xr-header > div,
+.xr-header > ul {
+  display: inline;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.xr-obj-type,
+.xr-array-name {
+  margin-left: 2px;
+  margin-right: 10px;
+}
+
+.xr-obj-type {
+  color: var(--xr-font-color2);
+}
+
+.xr-sections {
+  padding-left: 0 !important;
+  display: grid;
+  grid-template-columns: 150px auto auto 1fr 20px 20px;
+}
+
+.xr-section-item {
+  display: contents;
+}
+
+.xr-section-item input {
+  display: none;
+}
+
+.xr-section-item input + label {
+  color: var(--xr-disabled-color);
+}
+
+.xr-section-item input:enabled + label {
+  cursor: pointer;
+  color: var(--xr-font-color2);
+}
+
+.xr-section-item input:enabled + label:hover {
+  color: var(--xr-font-color0);
+}
+
+.xr-section-summary {
+  grid-column: 1;
+  color: var(--xr-font-color2);
+  font-weight: 500;
+}
+
+.xr-section-summary > span {
+  display: inline-block;
+  padding-left: 0.5em;
+}
+
+.xr-section-summary-in:disabled + label {
+  color: var(--xr-font-color2);
+}
+
+.xr-section-summary-in + label:before {
+  display: inline-block;
+  content: '►';
+  font-size: 11px;
+  width: 15px;
+  text-align: center;
+}
+
+.xr-section-summary-in:disabled + label:before {
+  color: var(--xr-disabled-color);
+}
+
+.xr-section-summary-in:checked + label:before {
+  content: '▼';
+}
+
+.xr-section-summary-in:checked + label > span {
+  display: none;
+}
+
+.xr-section-summary,
+.xr-section-inline-details {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+.xr-section-inline-details {
+  grid-column: 2 / -1;
+}
+
+.xr-section-details {
+  display: none;
+  grid-column: 1 / -1;
+  margin-bottom: 5px;
+}
+
+.xr-section-summary-in:checked ~ .xr-section-details {
+  display: contents;
+}
+
+.xr-array-wrap {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 20px auto;
+}
+
+.xr-array-wrap > label {
+  grid-column: 1;
+  vertical-align: top;
+}
+
+.xr-preview {
+  color: var(--xr-font-color3);
+}
+
+.xr-array-preview,
+.xr-array-data {
+  padding: 0 5px !important;
+  grid-column: 2;
+}
+
+.xr-array-data,
+.xr-array-in:checked ~ .xr-array-preview {
+  display: none;
+}
+
+.xr-array-in:checked ~ .xr-array-data,
+.xr-array-preview {
+  display: inline-block;
+}
+
+.xr-dim-list {
+  display: inline-block !important;
+  list-style: none;
+  padding: 0 !important;
+  margin: 0;
+}
+
+.xr-dim-list li {
+  display: inline-block;
+  padding: 0;
+  margin: 0;
+}
+
+.xr-dim-list:before {
+  content: '(';
+}
+
+.xr-dim-list:after {
+  content: ')';
+}
+
+.xr-dim-list li:not(:last-child):after {
+  content: ',';
+  padding-right: 5px;
+}
+
+.xr-has-index {
+  font-weight: bold;
+}
+
+.xr-var-list,
+.xr-var-item {
+  display: contents;
+}
+
+.xr-var-item > div,
+.xr-var-item label,
+.xr-var-item > .xr-var-name span {
+  background-color: var(--xr-background-color-row-even);
+  margin-bottom: 0;
+}
+
+.xr-var-item > .xr-var-name:hover span {
+  padding-right: 5px;
+}
+
+.xr-var-list > li:nth-child(odd) > div,
+.xr-var-list > li:nth-child(odd) > label,
+.xr-var-list > li:nth-child(odd) > .xr-var-name span {
+  background-color: var(--xr-background-color-row-odd);
+}
+
+.xr-var-name {
+  grid-column: 1;
+}
+
+.xr-var-dims {
+  grid-column: 2;
+}
+
+.xr-var-dtype {
+  grid-column: 3;
+  text-align: right;
+  color: var(--xr-font-color2);
+}
+
+.xr-var-preview {
+  grid-column: 4;
+}
+
+.xr-index-preview {
+  grid-column: 2 / 5;
+  color: var(--xr-font-color2);
+}
+
+.xr-var-name,
+.xr-var-dims,
+.xr-var-dtype,
+.xr-preview,
+.xr-attrs dt {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: 10px;
+}
+
+.xr-var-name:hover,
+.xr-var-dims:hover,
+.xr-var-dtype:hover,
+.xr-attrs dt:hover {
+  overflow: visible;
+  width: auto;
+  z-index: 1;
+}
+
+.xr-var-attrs,
+.xr-var-data,
+.xr-index-data {
+  display: none;
+  background-color: var(--xr-background-color) !important;
+  padding-bottom: 5px !important;
+}
+
+.xr-var-attrs-in:checked ~ .xr-var-attrs,
+.xr-var-data-in:checked ~ .xr-var-data,
+.xr-index-data-in:checked ~ .xr-index-data {
+  display: block;
+}
+
+.xr-var-data > table {
+  float: right;
+}
+
+.xr-var-name span,
+.xr-var-data,
+.xr-index-name div,
+.xr-index-data,
+.xr-attrs {
+  padding-left: 25px !important;
+}
+
+.xr-attrs,
+.xr-var-attrs,
+.xr-var-data,
+.xr-index-data {
+  grid-column: 1 / -1;
+}
+
+dl.xr-attrs {
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: 125px auto;
+}
+
+.xr-attrs dt,
+.xr-attrs dd {
+  padding: 0;
+  margin: 0;
+  float: left;
+  padding-right: 10px;
+  width: auto;
+}
+
+.xr-attrs dt {
+  font-weight: normal;
+  grid-column: 1;
+}
+
+.xr-attrs dt:hover span {
+  display: inline-block;
+  background: var(--xr-background-color);
+  padding-right: 10px;
+}
+
+.xr-attrs dd {
+  grid-column: 2;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.xr-icon-database,
+.xr-icon-file-text2,
+.xr-no-icon {
+  display: inline-block;
+  vertical-align: middle;
+  width: 1em;
+  height: 1.5em !important;
+  stroke-width: 0;
+  stroke: currentColor;
+  fill: currentColor;
+}
+</style><pre class='xr-text-repr-fallback'>&lt;xarray.Dataset&gt;
+Dimensions:      (pressure: 10)
+Coordinates:
+  * pressure     (pressure) float64 39.46 58.12 57.36 3.418 ... 2.231 67.68 83.0
+Data variables:
+    Temperature  (pressure) float64 1.955 1.42 1.715 2.844 ... 1.394 2.004 1.583
+    Salinity     (pressure) float64 34.7 34.84 34.73 35.35 ... 35.15 35.48 34.66
+Attributes: (12/32)
+    id:                     your_unique_id_here
+    naming_authority:       institution that provides the id
+    title:                  Depth Profile Data
+    summary:                This dataset contains depth profiles of temperatu...
+    keywords:               sea_water_temperature, sea_water_salinity
+    keywords_vocabulary:    CF:NetCDF COARDS Climate and Forecast Standard Names
+    ...                     ...
+    project:                Your Project Name
+    instrument:             CTD
+    instrument_vocabulary:  http://vocab.nerc.ac.uk/collection/L22/current/TO...
+    license:                https://creativecommons.org/licenses/by/4.0/
+    featureType:            profile
+    station_name:           S1</pre><div class='xr-wrap' style='display:none'><div class='xr-header'><div class='xr-obj-type'>xarray.Dataset</div></div><ul class='xr-sections'><li class='xr-section-item'><input id='section-b11ee543-c297-45ff-9a7b-4dc76b5657fb' class='xr-section-summary-in' type='checkbox' disabled ><label for='section-b11ee543-c297-45ff-9a7b-4dc76b5657fb' class='xr-section-summary'  title='Expand/collapse section'>Dimensions:</label><div class='xr-section-inline-details'><ul class='xr-dim-list'><li><span class='xr-has-index'>pressure</span>: 10</li></ul></div><div class='xr-section-details'></div></li><li class='xr-section-item'><input id='section-23ae09f6-55d3-4b2a-9164-5f4f3a80ae86' class='xr-section-summary-in' type='checkbox'  checked><label for='section-23ae09f6-55d3-4b2a-9164-5f4f3a80ae86' class='xr-section-summary' >Coordinates: <span>(1)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>pressure</span></div><div class='xr-var-dims'>(pressure)</div><div class='xr-var-dtype'>float64</div><div class='xr-var-preview xr-preview'>39.46 58.12 57.36 ... 67.68 83.0</div><input id='attrs-c6cee571-6214-42f7-966d-fbde4782aea7' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-c6cee571-6214-42f7-966d-fbde4782aea7' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-c1885000-9feb-421c-a5c2-1641f813998c' class='xr-var-data-in' type='checkbox'><label for='data-c1885000-9feb-421c-a5c2-1641f813998c' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>standard_name :</span></dt><dd>sea_water_pressure</dd><dt><span>long_name :</span></dt><dd>Sea water pressure</dd><dt><span>units :</span></dt><dd>dbar</dd><dt><span>coverage_content_type :</span></dt><dd>coordinate</dd></dl></div><div class='xr-var-data'><pre>array([39.455654, 58.119035, 57.355769,  3.418398, 22.05053 , 18.760447,
+       94.570563,  2.230532, 67.67562 , 83.00015 ])</pre></div></li></ul></div></li><li class='xr-section-item'><input id='section-6cf9f968-42c7-4191-ab7f-a5a6624cf7c5' class='xr-section-summary-in' type='checkbox'  checked><label for='section-6cf9f968-42c7-4191-ab7f-a5a6624cf7c5' class='xr-section-summary' >Data variables: <span>(2)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-var-name'><span>Temperature</span></div><div class='xr-var-dims'>(pressure)</div><div class='xr-var-dtype'>float64</div><div class='xr-var-preview xr-preview'>1.955 1.42 1.715 ... 2.004 1.583</div><input id='attrs-2030a9dc-e4ec-452a-ac9c-c05eb1618d6d' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-2030a9dc-e4ec-452a-ac9c-c05eb1618d6d' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-c0bca18a-0880-4b5e-b885-0d73c2eaade0' class='xr-var-data-in' type='checkbox'><label for='data-c0bca18a-0880-4b5e-b885-0d73c2eaade0' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>standard_name :</span></dt><dd>sea_water_temperature</dd><dt><span>long_name :</span></dt><dd>Temperature of sea water</dd><dt><span>units :</span></dt><dd>degrees_Celsius</dd><dt><span>coverage_content_type :</span></dt><dd>physicalMeasurement</dd></dl></div><div class='xr-var-data'><pre>array([1.95533107, 1.41958791, 1.71529616, 2.84360563, 2.41972826,
+       1.22250547, 2.05988036, 1.39393846, 2.0035247 , 1.58250776])</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span>Salinity</span></div><div class='xr-var-dims'>(pressure)</div><div class='xr-var-dtype'>float64</div><div class='xr-var-preview xr-preview'>34.7 34.84 34.73 ... 35.48 34.66</div><input id='attrs-2de16885-fec6-453a-bfdf-2815803ed20e' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-2de16885-fec6-453a-bfdf-2815803ed20e' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-10fce6d7-91a5-419b-9829-c3c9450bc9b4' class='xr-var-data-in' type='checkbox'><label for='data-10fce6d7-91a5-419b-9829-c3c9450bc9b4' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>standard_name :</span></dt><dd>sea_water_salinity</dd><dt><span>long_name :</span></dt><dd>Salinity of sea water</dd><dt><span>units :</span></dt><dd>PSU</dd><dt><span>coverage_content_type :</span></dt><dd>physicalMeasurement</dd></dl></div><div class='xr-var-data'><pre>array([34.69975973, 34.84037386, 34.72520826, 35.34808803, 34.83566471,
+       34.77718679, 35.03124111, 35.14946971, 35.47912241, 34.65869081])</pre></div></li></ul></div></li><li class='xr-section-item'><input id='section-2c9093a8-b294-4814-88ee-4d74fb752257' class='xr-section-summary-in' type='checkbox'  ><label for='section-2c9093a8-b294-4814-88ee-4d74fb752257' class='xr-section-summary' >Indexes: <span>(1)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-index-name'><div>pressure</div></div><div class='xr-index-preview'>PandasIndex</div><div></div><input id='index-344e1b39-98f4-44b8-98b1-57e645915300' class='xr-index-data-in' type='checkbox'/><label for='index-344e1b39-98f4-44b8-98b1-57e645915300' title='Show/Hide index repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-index-data'><pre>PandasIndex(Index([  39.4556544280039,  58.11903479614398,   57.3557689889737,
+       3.4183980542843884,  22.05053002488748,  18.76044658260758,
+         94.5705628202497, 2.2305319880886354,  67.67561997590708,
+        83.00015013251017],
+      dtype=&#x27;float64&#x27;, name=&#x27;pressure&#x27;))</pre></div></li></ul></div></li><li class='xr-section-item'><input id='section-5db2f5bd-4024-470e-a43a-bc969d84eec5' class='xr-section-summary-in' type='checkbox'  ><label for='section-5db2f5bd-4024-470e-a43a-bc969d84eec5' class='xr-section-summary' >Attributes: <span>(32)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><dl class='xr-attrs'><dt><span>id :</span></dt><dd>your_unique_id_here</dd><dt><span>naming_authority :</span></dt><dd>institution that provides the id</dd><dt><span>title :</span></dt><dd>Depth Profile Data</dd><dt><span>summary :</span></dt><dd>This dataset contains depth profiles of temperature and salinity measurements.</dd><dt><span>keywords :</span></dt><dd>sea_water_temperature, sea_water_salinity</dd><dt><span>keywords_vocabulary :</span></dt><dd>CF:NetCDF COARDS Climate and Forecast Standard Names</dd><dt><span>geospatial_lat_min :</span></dt><dd>80.6713</dd><dt><span>geospatial_lat_max :</span></dt><dd>80.6713</dd><dt><span>geospatial_lon_min :</span></dt><dd>31.2093</dd><dt><span>geospatial_lon_max :</span></dt><dd>31.2093</dd><dt><span>time_coverage_start :</span></dt><dd>2020-04-26T09:56:00Z</dd><dt><span>time_coverage_end :</span></dt><dd>2020-04-26T09:56:00Z</dd><dt><span>Conventions :</span></dt><dd>ACDD-1.3, CF-1.11</dd><dt><span>history :</span></dt><dd>2024-02-21T15:31:06Z: Modified by YourName using Python</dd><dt><span>source :</span></dt><dd>Measurement</dd><dt><span>processing_level :</span></dt><dd>Level of processing/quality control</dd><dt><span>date_created :</span></dt><dd>2024-02-21T15:31:06Z</dd><dt><span>creator_type :</span></dt><dd>person</dd><dt><span>creator_institution :</span></dt><dd>Your Institution</dd><dt><span>creator_name :</span></dt><dd>Your Name</dd><dt><span>creator_email :</span></dt><dd>your@email.com</dd><dt><span>creator_url :</span></dt><dd>your_url_here</dd><dt><span>institution :</span></dt><dd>Your Institution</dd><dt><span>publisher_name :</span></dt><dd>Publisher Name</dd><dt><span>publisher_email :</span></dt><dd>publisher@email.com</dd><dt><span>publisher_url :</span></dt><dd>publisher_url_here</dd><dt><span>project :</span></dt><dd>Your Project Name</dd><dt><span>instrument :</span></dt><dd>CTD</dd><dt><span>instrument_vocabulary :</span></dt><dd>http://vocab.nerc.ac.uk/collection/L22/current/TOOL0001/</dd><dt><span>license :</span></dt><dd>https://creativecommons.org/licenses/by/4.0/</dd><dt><span>featureType :</span></dt><dd>profile</dd><dt><span>station_name :</span></dt><dd>S1</dd></dl></div></li></ul></div></div></div></div>
+</div>
+</section>
+<section id="a-quick-introduction-to-for-loops">
+<h2>A quick introduction to for loops<a class="headerlink" href="#a-quick-introduction-to-for-loops" title="Permalink to this heading">#</a></h2>
+<p>A for loop is a way to do the same thing multiple times for different items in a list or collection. Let’s firstly demonstrate how a for loop works for those who are unfamiliar.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">numbers</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span>
+
+<span class="c1"># Use a for loop to iterate through the list</span>
+<span class="k">for</span> <span class="n">number</span> <span class="ow">in</span> <span class="n">numbers</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Printing number&#39;</span><span class="p">,</span><span class="n">number</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Printing number 1
+Printing number 2
+Printing number 3
+Printing number 4
+Printing number 5
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="looping-through-csv-files-that-contain-your-data">
+<h2>Looping through CSV files that contain your data<a class="headerlink" href="#looping-through-csv-files-that-contain-your-data" title="Permalink to this heading">#</a></h2>
+<p>Hopefully all your tabular files are structured in the same way with the same column headers. If not, fix this first!</p>
+<p>Imagine you have a directory that has multiple CSV files in it, each one containing a depth profile. Let’s loop through each file and load it.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">folder_path</span> <span class="o">=</span> <span class="s1">&#39;../data/csv_files/&#39;</span> <span class="c1"># Path to the folder containing CSV files</span>
+<span class="n">files</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">folder_path</span> <span class="o">+</span> <span class="s1">&#39;*.csv&#39;</span><span class="p">)</span> <span class="c1"># Get a list of file paths for all CSV files in the folder</span>
+
+<span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Opened </span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>    
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Opened ../data/csv_files/depth_profile_S4.csv
+Opened ../data/csv_files/depth_profile_S5.csv
+Opened ../data/csv_files/depth_profile_S2.csv
+Opened ../data/csv_files/depth_profile_S1.csv
+Opened ../data/csv_files/depth_profile_S3.csv
+Opened ../data/csv_files/depth_profile_S7.csv
+Opened ../data/csv_files/depth_profile_S8.csv
+Opened ../data/csv_files/depth_profile_S6.csv
+</pre></div>
+</div>
+</div>
+</div>
+<p>To assign a different file name for each NetCDF file, we need to include a variable in the filename that is different for each loop iteration - perhaps some function of the input filename.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">folder_path</span> <span class="o">=</span> <span class="s1">&#39;../data/csv_files/&#39;</span> <span class="c1"># Path to the folder containing CSV files</span>
+<span class="n">files</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">folder_path</span> <span class="o">+</span> <span class="s1">&#39;*.csv&#39;</span><span class="p">)</span> <span class="c1"># Get a list of file paths for all CSV files in the folder</span>
+
+<span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>    
+    <span class="n">station</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">station</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>S4
+S5
+S2
+S1
+S3
+S7
+S8
+S6
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="different-global-attributes-for-each-netcdf-file">
+<h2>Different global attributes for each NetCDF file<a class="headerlink" href="#different-global-attributes-for-each-netcdf-file" title="Permalink to this heading">#</a></h2>
+<p>What about the global attributes? Some attributes might be the same for every file, like the creator and publisher details. However, other attributes will be different for each file.</p>
+<p>We are going to store the metadata in a separate file and load it in. Here are 3 examples - go and look at the files themselves if you want to create your own.</p>
+<section id="json">
+<h3>JSON:<a class="headerlink" href="#json" title="Permalink to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Read the JSON file</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;../data/metadata_files/depth_profiles_metadata.json&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">json_file</span><span class="p">:</span>
+    <span class="n">metadata</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">json_file</span><span class="p">)</span>
+    
+<span class="c1"># The data are loaded into a Python dictionary that you can easily access.</span>
+<span class="k">for</span> <span class="n">station</span><span class="p">,</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">metadata</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Station: </span><span class="si">{</span><span class="n">station</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Latitude: </span><span class="si">{</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;latitude&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Station: S1
+Latitude: 27.125
+Station: S2
+Latitude: 27.128
+Station: S3
+Latitude: 27.123
+Station: S4
+Latitude: 27.126
+Station: S5
+Latitude: 27.122
+Station: S6
+Latitude: 27.124
+Station: S7
+Latitude: 27.127
+Station: S8
+Latitude: 27.125
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="yaml">
+<h3>YAML<a class="headerlink" href="#yaml" title="Permalink to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Read the YAML file</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;../data/metadata_files/depth_profiles_metadata.json&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">yaml_file</span><span class="p">:</span>
+    <span class="n">metadata</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">yaml_file</span><span class="p">)</span>
+
+<span class="c1"># The data are loaded into a Python dictionary that you can easily access.</span>
+<span class="k">for</span> <span class="n">station</span><span class="p">,</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">metadata</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Station: </span><span class="si">{</span><span class="n">station</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Latitude: </span><span class="si">{</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;latitude&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Station: S1
+Latitude: 27.125
+Station: S2
+Latitude: 27.128
+Station: S3
+Latitude: 27.123
+Station: S4
+Latitude: 27.126
+Station: S5
+Latitude: 27.122
+Station: S6
+Latitude: 27.124
+Station: S7
+Latitude: 27.127
+Station: S8
+Latitude: 27.125
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="csv">
+<h3>CSV<a class="headerlink" href="#csv" title="Permalink to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Read the CSV file into a pandas DataFrame</span>
+<span class="n">metadata_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;../data/metadata_files/depth_profiles_metadata.csv&#39;</span><span class="p">)</span>
+
+<span class="c1"># Loop through each row in the DataFrame</span>
+<span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">metadata_df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Station: </span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;Station&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Latitude: </span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;latitude&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Station: S1
+Latitude: 27.125
+Station: S2
+Latitude: 27.128
+Station: S3
+Latitude: 27.123
+Station: S4
+Latitude: 27.126
+Station: S5
+Latitude: 27.122
+Station: S6
+Latitude: 27.124
+Station: S7
+Latitude: 27.127
+Station: S8
+Latitude: 27.125
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="looping-through-the-data-and-global-attributes-at-the-same-time">
+<h2>Looping through the data and global attributes at the same time<a class="headerlink" href="#looping-through-the-data-and-global-attributes-at-the-same-time" title="Permalink to this heading">#</a></h2>
+<p>We need to loop through both the data files and the files containing the global attributes at the same time. The key here is to have something that links the two. In this case, we have the station name in the data file name and in the global attributes metadata files.</p>
+<p>In this case we will proceed with the YAML file, but hopefully you can incorporate the code below yourself if you would rather work with JSON or CSV files.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Read the YAML file</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;../data/metadata_files/depth_profiles_metadata.json&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">yaml_file</span><span class="p">:</span>
+    <span class="n">metadata</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">yaml_file</span><span class="p">)</span>
+    
+<span class="n">data_files</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">folder_path</span> <span class="o">+</span> <span class="s1">&#39;*.csv&#39;</span><span class="p">)</span> <span class="c1"># Get a list of file paths for all the data files in the folder</span>
+
+<span class="k">for</span> <span class="n">data_file</span> <span class="ow">in</span> <span class="n">data_files</span><span class="p">:</span> <span class="c1"># Looping through each data file</span>
+    <span class="n">data_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">data_file</span><span class="p">)</span>
+    <span class="n">station</span> <span class="o">=</span> <span class="n">data_file</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># Extracting the station name from the file path</span>
+    
+    <span class="n">metadata_station</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="n">station</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">metadata_station</span><span class="p">)</span>    
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;latitude&#39;: 27.126, &#39;longitude&#39;: 29.993, &#39;timestamp&#39;: &#39;2023-06-15T10:45:00Z&#39;, &#39;id&#39;: &#39;f7a6c89d-4c3e-4a94-8e9a-04a7f8f43d6c&#39;}
+{&#39;latitude&#39;: 27.122, &#39;longitude&#39;: 29.996, &#39;timestamp&#39;: &#39;2023-06-15T10:50:00Z&#39;, &#39;id&#39;: &#39;d8eb21f2-43a6-4b18-9c6c-8f8b30051718&#39;}
+{&#39;latitude&#39;: 27.128, &#39;longitude&#39;: 29.998, &#39;timestamp&#39;: &#39;2023-06-15T10:35:00Z&#39;, &#39;id&#39;: &#39;cc29745a-925b-45d0-8b88-ce967322b6c4&#39;}
+{&#39;latitude&#39;: 27.125, &#39;longitude&#39;: 29.995, &#39;timestamp&#39;: &#39;2023-06-15T10:30:00Z&#39;, &#39;id&#39;: &#39;3b89f178-8c48-4fc4-ae7d-27e2f4c6d9e1&#39;}
+{&#39;latitude&#39;: 27.123, &#39;longitude&#39;: 29.997, &#39;timestamp&#39;: &#39;2023-06-15T10:40:00Z&#39;, &#39;id&#39;: &#39;a43de701-3bfe-4c7e-a78b-1d87a9af1122&#39;}
+{&#39;latitude&#39;: 27.127, &#39;longitude&#39;: 29.995, &#39;timestamp&#39;: &#39;2023-06-15T11:00:00Z&#39;, &#39;id&#39;: &#39;5f2c68c1-68d7-4d3b-aa2b-254c73e4b59e&#39;}
+{&#39;latitude&#39;: 27.125, &#39;longitude&#39;: 29.999, &#39;timestamp&#39;: &#39;2023-06-15T11:05:00Z&#39;, &#39;id&#39;: &#39;e4c040e2-1506-4099-85f1-99e0e47244f7&#39;}
+{&#39;latitude&#39;: 27.124, &#39;longitude&#39;: 29.994, &#39;timestamp&#39;: &#39;2023-06-15T10:55:00Z&#39;, &#39;id&#39;: &#39;9b4e0d0a-51d9-4d5b-a144-0a8c97cc1181&#39;}
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="creating-multiple-cf-netcdf-files">
+<h2>Creating multiple CF-NetCDF files<a class="headerlink" href="#creating-multiple-cf-netcdf-files" title="Permalink to this heading">#</a></h2>
+<p>Now let’s put all of this together to create our NetCDF files.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Read the YAML file</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;../data/metadata_files/depth_profiles_metadata.json&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">yaml_file</span><span class="p">:</span>
+    <span class="n">metadata</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">yaml_file</span><span class="p">)</span>
+    
+<span class="n">data_files</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">folder_path</span> <span class="o">+</span> <span class="s1">&#39;*.csv&#39;</span><span class="p">)</span> <span class="c1"># Get a list of file paths for all the data files in the folder</span>
+
+<span class="k">for</span> <span class="n">data_file</span> <span class="ow">in</span> <span class="n">data_files</span><span class="p">:</span> <span class="c1"># Looping through each data file</span>
+    <span class="n">data_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">data_file</span><span class="p">)</span>
+    <span class="n">station</span> <span class="o">=</span> <span class="n">data_file</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># Extracting the station name from the file path</span>
+    
+    <span class="n">metadata_station</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="n">station</span><span class="p">]</span>
+    
+    <span class="c1"># Create an xarray dataset from the dataframe</span>
+    <span class="n">xrds</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">(</span>
+        <span class="n">coords</span><span class="o">=</span><span class="p">{</span>
+            <span class="s1">&#39;pressure&#39;</span><span class="p">:</span> <span class="n">data_df</span><span class="p">[</span><span class="s1">&#39;Pressure&#39;</span><span class="p">]</span>
+        <span class="p">},</span>
+        <span class="n">data_vars</span><span class="o">=</span><span class="p">{</span>
+            <span class="s1">&#39;Temperature&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;pressure&#39;</span><span class="p">,</span> <span class="n">data_df</span><span class="p">[</span><span class="s1">&#39;Temperature&#39;</span><span class="p">]),</span>
+            <span class="s1">&#39;Salinity&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;pressure&#39;</span><span class="p">,</span> <span class="n">data_df</span><span class="p">[</span><span class="s1">&#39;Salinity&#39;</span><span class="p">]),</span>
+        <span class="p">}</span> 
+    <span class="p">)</span>
+
+    <span class="c1"># Add variable attributes</span>
+    <span class="n">xrds</span><span class="p">[</span><span class="s1">&#39;Temperature&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;standard_name&#39;</span><span class="p">:</span> <span class="s1">&#39;sea_water_temperature&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;long_name&#39;</span><span class="p">:</span> <span class="s1">&#39;Temperature of sea water&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;degrees_Celsius&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;coverage_content_type&#39;</span><span class="p">:</span> <span class="s1">&#39;physicalMeasurement&#39;</span>
+    <span class="p">}</span>
+    <span class="n">xrds</span><span class="p">[</span><span class="s1">&#39;Salinity&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;standard_name&#39;</span><span class="p">:</span> <span class="s1">&#39;sea_water_salinity&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;long_name&#39;</span><span class="p">:</span> <span class="s1">&#39;Salinity of sea water&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;PSU&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;coverage_content_type&#39;</span><span class="p">:</span> <span class="s1">&#39;physicalMeasurement&#39;</span>
+    <span class="p">}</span>
+    <span class="n">xrds</span><span class="p">[</span><span class="s1">&#39;pressure&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;standard_name&#39;</span><span class="p">:</span> <span class="s1">&#39;sea_water_pressure&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;long_name&#39;</span><span class="p">:</span> <span class="s1">&#39;Sea water pressure&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;dbar&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;coverage_content_type&#39;</span><span class="p">:</span> <span class="s1">&#39;coordinate&#39;</span>
+    <span class="p">}</span>
+    
+    <span class="c1"># Get the current timestamp in UTC and format it in ISO8601</span>
+    <span class="n">time_now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">T%H:%M:%SZ&#39;</span><span class="p">)</span>
+    
+    <span class="n">xrds</span><span class="o">.</span><span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">metadata_station</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;naming_authority&#39;</span><span class="p">:</span> <span class="s1">&#39;institution that provides the id&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;Depth Profile Data&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;summary&#39;</span><span class="p">:</span> <span class="s1">&#39;This dataset contains depth profiles of temperature and salinity measurements.&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;keywords&#39;</span><span class="p">:</span> <span class="s1">&#39;sea_water_temperature, sea_water_salinity&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;keywords_vocabulary&#39;</span><span class="p">:</span> <span class="s1">&#39;CF:NetCDF COARDS Climate and Forecast Standard Names&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;geospatial_lat_min&#39;</span><span class="p">:</span> <span class="n">metadata_station</span><span class="p">[</span><span class="s1">&#39;latitude&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;geospatial_lat_max&#39;</span><span class="p">:</span> <span class="n">metadata_station</span><span class="p">[</span><span class="s1">&#39;latitude&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;geospatial_lon_min&#39;</span><span class="p">:</span> <span class="n">metadata_station</span><span class="p">[</span><span class="s1">&#39;longitude&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;geospatial_lon_max&#39;</span><span class="p">:</span> <span class="n">metadata_station</span><span class="p">[</span><span class="s1">&#39;longitude&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;time_coverage_start&#39;</span><span class="p">:</span> <span class="n">metadata_station</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;time_coverage_end&#39;</span><span class="p">:</span> <span class="n">metadata_station</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;Conventions&#39;</span><span class="p">:</span> <span class="s1">&#39;ACDD-1.3, CF-1.11&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;history&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">time_now</span><span class="si">}</span><span class="s1">: Modified by YourName using Python&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;source&#39;</span><span class="p">:</span> <span class="s1">&#39;Measurement&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;processing_level&#39;</span><span class="p">:</span> <span class="s1">&#39;Level of processing/quality control&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;date_created&#39;</span><span class="p">:</span> <span class="n">time_now</span><span class="p">,</span>
+        <span class="s1">&#39;creator_type&#39;</span><span class="p">:</span> <span class="s1">&#39;person&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;creator_institution&#39;</span><span class="p">:</span> <span class="s1">&#39;Your Institution&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;creator_name&#39;</span><span class="p">:</span> <span class="s1">&#39;Your Name&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;creator_email&#39;</span><span class="p">:</span> <span class="s1">&#39;your@email.com&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;creator_url&#39;</span><span class="p">:</span> <span class="s1">&#39;your_url_here&#39;</span><span class="p">,</span> <span class="c1"># OrcID is best practice, e.g. https://orcid.org/0000-0002-9746-544X</span>
+        <span class="s1">&#39;institution&#39;</span><span class="p">:</span> <span class="s1">&#39;Your Institution&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;publisher_name&#39;</span><span class="p">:</span> <span class="s1">&#39;Publisher Name&#39;</span><span class="p">,</span> <span class="c1"># Data centre where your data will be published</span>
+        <span class="s1">&#39;publisher_email&#39;</span><span class="p">:</span> <span class="s1">&#39;publisher@email.com&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;publisher_url&#39;</span><span class="p">:</span> <span class="s1">&#39;publisher_url_here&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;project&#39;</span><span class="p">:</span> <span class="s1">&#39;Your Project Name&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;instrument&#39;</span><span class="p">:</span> <span class="s1">&#39;CTD&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;instrument_vocabulary&#39;</span><span class="p">:</span> <span class="s1">&#39;http://vocab.nerc.ac.uk/collection/L22/current/TOOL0001/&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;license&#39;</span><span class="p">:</span> <span class="s1">&#39;https://creativecommons.org/licenses/by/4.0/&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;featureType&#39;</span><span class="p">:</span> <span class="s1">&#39;profile&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;station_name&#39;</span><span class="p">:</span> <span class="n">station</span> <span class="c1"># Custom attribute, but you can add any attribute you like alongside the minimum requirements.</span>
+    <span class="p">}</span>
+    
+    <span class="n">xrds</span><span class="o">.</span><span class="n">to_netcdf</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;../data/netcdf_files/06_depth_profile_</span><span class="si">{</span><span class="n">station</span><span class="si">}</span><span class="s1">.nc&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  <!-- Previous / next buttons -->
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="05_how_to_structure_your_NetCDF_file_or_files.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">05: How to structure you NetCDF file or files</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="07_combing_data_from_multiple_netcdf_files.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">07: Combining data from multiple netcdf files</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-refresh-of-how-to-create-a-single-netcdf-file">A refresh of how to create a single NetCDF file</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-quick-introduction-to-for-loops">A quick introduction to for loops</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#looping-through-csv-files-that-contain-your-data">Looping through CSV files that contain your data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#different-global-attributes-for-each-netcdf-file">Different global attributes for each NetCDF file</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#json">JSON:</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#yaml">YAML</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#csv">CSV</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#looping-through-the-data-and-global-attributes-at-the-same-time">Looping through the data and global attributes at the same time</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-multiple-cf-netcdf-files">Creating multiple CF-NetCDF files</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Luke Marsden
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=365ca57ee442770a23c6"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=365ca57ee442770a23c6"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

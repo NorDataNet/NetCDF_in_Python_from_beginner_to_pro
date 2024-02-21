@@ -1,0 +1,61 @@
+Traceback (most recent call last):
+  File "/home/lukem/anaconda3/lib/python3.11/site-packages/jupyter_cache/executors/utils.py", line 58, in single_nb_execution
+    executenb(
+  File "/home/lukem/anaconda3/lib/python3.11/site-packages/nbclient/client.py", line 1305, in execute
+    return NotebookClient(nb=nb, resources=resources, km=km, **kwargs).execute()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/lukem/anaconda3/lib/python3.11/site-packages/jupyter_core/utils/__init__.py", line 173, in wrapped
+    return loop.run_until_complete(inner)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/lukem/anaconda3/lib/python3.11/asyncio/base_events.py", line 653, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/lukem/anaconda3/lib/python3.11/site-packages/nbclient/client.py", line 705, in async_execute
+    await self.async_execute_cell(
+  File "/home/lukem/anaconda3/lib/python3.11/site-packages/nbclient/client.py", line 1058, in async_execute_cell
+    await self._check_raise_for_error(cell, cell_index, exec_reply)
+  File "/home/lukem/anaconda3/lib/python3.11/site-packages/nbclient/client.py", line 914, in _check_raise_for_error
+    raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
+nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
+------------------
+import numpy as np
+
+latitudes = np.arange(58, 62.1, 0.1)
+longitudes = np.arange(9, 13, 0.1)
+timestamps_hours = [
+    datetime.datetime(2023, 6, 11, 0, 0, 0),
+    datetime.datetime(2023, 6, 12, 0, 0, 0),
+    datetime.datetime(2023, 6, 13, 0, 0, 0),
+    datetime.datetime(2023, 6, 14, 0, 0, 0),
+    datetime.datetime(2023, 6, 15, 0, 0, 0),
+    datetime.datetime(2023, 6, 16, 0, 0, 0)
+]
+
+num_latitudes = len(latitudes)
+num_longitudes = len(longitudes)
+num_timestamps = len(timestamps_hours)
+
+# Generating random wind speeds (assuming a range of 0 to 5 m/s for demonstration purposes)
+mean_wind_speeds = np.random.rand(num_latitudes, num_longitudes, num_timestamps) * 5
+
+xrds = xr.Dataset(
+    coords={
+        'time': times,
+        'latitude': latitudes,
+        'longitude', longitudes
+    },
+    data_vars={
+        'wind_speed': (['latitude','longitude','time'], wind_speed_3d_array)
+    } 
+)
+
+xrds = xrds.expand_dims(nv=2)
+------------------
+
+
+[0;36m  Cell [0;32mIn[10], line 25[0;36m[0m
+[0;31m    'longitude', longitudes[0m
+[0m              ^[0m
+[0;31mSyntaxError[0m[0;31m:[0m ':' expected after dictionary key
+
+
