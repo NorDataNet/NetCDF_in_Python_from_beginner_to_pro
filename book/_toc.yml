@@ -10,7 +10,7 @@ chapters:
 - file: 04_creating_a_cfnetcdf_file.ipynb
 - file: 05_how_to_structure_your_NetCDF_file_or_files.ipynb
 - file: 06_creating_multiple_cfnetcdf_files_in_one_go.ipynb
-#- file: 07_combing_data_from_multiple_netcdf_files.ipynb
+- file: 07_combing_data_from_multiple_netcdf_files.ipynb
 #- file: 08_ancillary_variables.ipynb
 #- file: 09_cells_and_cell_methods.ipynb
 
