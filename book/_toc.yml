@@ -12,6 +12,6 @@ chapters:
 - file: 06_creating_multiple_cfnetcdf_files_in_one_go.ipynb
 - file: 07_combing_data_from_multiple_netcdf_files.ipynb
 - file: 08_ancillary_variables.ipynb
-#- file: 09_cells_and_cell_methods.ipynb
+- file: 09_cells_and_cell_methods.ipynb
 
 
