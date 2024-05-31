@@ -11,7 +11,7 @@ You can view the Jupyter book at https://lhmarsden.github.io/NetCDF_in_Python_fr
 ## How to cite this course
 
 If you think this course contributed to the work you are doing, consider citing it in your list of references. Here is a recommended citation:
-Luke Marsden. (2024, April 19). lhmarsden/NetCDF_in_Python_from_beginner_to_pro: NetCDF in Python - from beginner to pro. Zenodo. https://doi.org/10.5281/zenodo.10997447
+Marsden, L. (2024, April 19). NetCDF in Python - from beginner to pro. Zenodo. https://doi.org/10.5281/zenodo.10997447
 
 And you can navigate to the publication and export the citation in different styles and formats by clicking the icon below.
 
