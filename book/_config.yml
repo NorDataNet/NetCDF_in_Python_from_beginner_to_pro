@@ -4,6 +4,7 @@
 title: NetCDF in Python - from beginner to pro
 author: Luke Marsden
 logo: logo.png
+logo_url: https://www.nordatanet.no/
 
 # Force re-execution of notebooks on each build.
 # See https://jupyterbook.org/content/execute.html
