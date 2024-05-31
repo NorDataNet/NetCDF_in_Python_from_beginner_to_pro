@@ -10,3 +10,13 @@ Below is the current contents of the course. Is anything missing? Let me know an
 
 ```{tableofcontents}
 ```
+
+## How to cite this course
+
+If you think this course contributed to the work you are doing, consider citing it in your list of references. Here is a recommended citation:
+
+Marsden, L. (2024, April 19). NetCDF in Python - from beginner to pro. Zenodo. https://doi.org/10.5281/zenodo.10997447
+
+And you can navigate to the publication and export the citation in different styles and formats by clicking the icon below.
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10997447.svg)](https://doi.org/10.5281/zenodo.10997447)
