@@ -6,7 +6,7 @@ This course has been designed to help you understand NetCDF files, get data out 
 
 You may be here because you are interested in publishing FAIR data. Did you know that a NetCDF file is not necessarily FAIR unless it adheres to certain conventions? You will learn about the Climate and Forecast (CF) conventions (https://cfconventions.org/) and the Attribute Convention for Data Discovery (ACDD - https://wiki.esipfed.org/Attribute_Convention_for_Data_Discovery_1-3), and how to make sure your files are compliant with them.
 
-You can view the Jupyter book at https://lhmarsden.github.io/NetCDF_in_Python_from_beginner_to_pro
+You can view the Jupyter book at https://nordatanet.github.io/NetCDF_in_Python_from_beginner_to_pro
 
 ## How to cite this course
 
