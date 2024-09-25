@@ -39,14 +39,8 @@ nbclient.exceptions.CellTimeoutError: A cell timed out while it was being execut
 The message was: Cell execution timed out.
 Here is a preview of the cell contents:
 -------------------
-base_url = 'https://opendap1.nodc.no/opendap/physics/point/cruise/nansen_legacy-single_profile/NMDC_Nansen-Legacy_PR_CT_58US_2021708'
-catalog_url = base_url + '/catalog.xml'
-catalog = TDSCatalog(catalog_url)
-
-for dataset in catalog.datasets:
-    profile_url = base_url + '/' + dataset
-    xrds = xr.open_dataset(profile_url)
-    print(xrds.attrs['time_coverage_start'])
-    
+['import pandas as pd', "base_url = 'https://opendap1.nodc.no/opendap/physics/point/cruise/nansen_legacy-single_profile/NMDC_Nansen-Legacy_PR_CT_58US_2021708'", "catalog_url = base_url + '/catalog.xml'", 'catalog = TDSCatalog(catalog_url)', '']
+...
+['', 'master_df', '', "#master_df.to_csv('/path/to/file.csv', index=False)", "#master_df.to_excel('/path/to/file.csv', index=False)  # Set index=False to exclude the index from being written to the Excel file"]
 -------------------
 
