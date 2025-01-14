@@ -395,7 +395,7 @@ document.write(`
 <section id="maximum-monthly-temperatures">
 <h2>Maximum monthly temperatures<a class="headerlink" href="#maximum-monthly-temperatures" title="Permalink to this heading">#</a></h2>
 <p>Let’s start with the basic code to create our xarray object for a time series of temperature values.</p>
-<p>Units of <em>months since date</em> or <em>years since date</em> are not recommended in CF because of potential for confusion with leap years. Therefore, we can use days since 1970-01-01 (the epoch) for first day of each month for 2023.</p>
+<p>Units of <em>months since date</em> or <em>years since date</em> are not recommended in CF because of potential for confusion with leap years. Therefore, we can use days since 1970-01-01 (the epoch) for first day of each month for 2023. One might use the start of each month, for example:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">datetime</span>
@@ -403,16 +403,16 @@ document.write(`
 <span class="kn">import</span> <span class="nn">calendar</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="n">days_since_epoch_month_start</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">start_days_since_epoch</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="n">year</span> <span class="o">=</span> <span class="mi">2023</span>
 <span class="n">epoch</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="mi">1970</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
 <span class="k">for</span> <span class="n">month</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">13</span><span class="p">):</span>
     <span class="n">first_day_of_month</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
     <span class="n">time_difference</span> <span class="o">=</span> <span class="p">(</span><span class="n">first_day_of_month</span> <span class="o">-</span> <span class="n">epoch</span><span class="p">)</span><span class="o">.</span><span class="n">days</span>
-    <span class="n">days_since_epoch_month_start</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">time_difference</span><span class="p">)</span>
+    <span class="n">start_days_since_epoch</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">time_difference</span><span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="n">days_since_epoch_month_start</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">start_days_since_epoch</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -428,7 +428,7 @@ document.write(`
 
 <span class="n">xrds</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">(</span>
     <span class="n">coords</span><span class="o">=</span><span class="p">{</span>
-        <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="n">days_since_epoch_month_start</span>
+        <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="n">start_days_since_epoch</span>
     <span class="p">},</span>
     <span class="n">data_vars</span><span class="o">=</span><span class="p">{</span>
         <span class="s1">&#39;Temperature&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">maximum_monthly_temperatures</span><span class="p">)</span>
@@ -482,13 +482,14 @@ document.write(`
   --xr-background-color-row-odd: var(--jp-layout-color2, #eeeeee);
 }
 
-html[theme=dark],
-body[data-theme=dark],
+html[theme="dark"],
+html[data-theme="dark"],
+body[data-theme="dark"],
 body.vscode-dark {
   --xr-font-color0: rgba(255, 255, 255, 1);
   --xr-font-color2: rgba(255, 255, 255, 0.54);
   --xr-font-color3: rgba(255, 255, 255, 0.38);
-  --xr-border-color: #1F1F1F;
+  --xr-border-color: #1f1f1f;
   --xr-disabled-color: #515151;
   --xr-background-color: #111111;
   --xr-background-color-row-even: #111111;
@@ -533,7 +534,7 @@ body.vscode-dark {
 .xr-sections {
   padding-left: 0 !important;
   display: grid;
-  grid-template-columns: 150px auto auto 1fr 20px 20px;
+  grid-template-columns: 150px auto auto 1fr 0 20px 0 20px;
 }
 
 .xr-section-item {
@@ -541,7 +542,9 @@ body.vscode-dark {
 }
 
 .xr-section-item input {
-  display: none;
+  display: inline-block;
+  opacity: 0;
+  height: 0;
 }
 
 .xr-section-item input + label {
@@ -551,6 +554,10 @@ body.vscode-dark {
 .xr-section-item input:enabled + label {
   cursor: pointer;
   color: var(--xr-font-color2);
+}
+
+.xr-section-item input:focus + label {
+  border: 2px solid var(--xr-font-color0);
 }
 
 .xr-section-item input:enabled + label:hover {
@@ -574,7 +581,7 @@ body.vscode-dark {
 
 .xr-section-summary-in + label:before {
   display: inline-block;
-  content: '►';
+  content: "►";
   font-size: 11px;
   width: 15px;
   text-align: center;
@@ -585,7 +592,7 @@ body.vscode-dark {
 }
 
 .xr-section-summary-in:checked + label:before {
-  content: '▼';
+  content: "▼";
 }
 
 .xr-section-summary-in:checked + label > span {
@@ -657,15 +664,15 @@ body.vscode-dark {
 }
 
 .xr-dim-list:before {
-  content: '(';
+  content: "(";
 }
 
 .xr-dim-list:after {
-  content: ')';
+  content: ")";
 }
 
 .xr-dim-list li:not(:last-child):after {
-  content: ',';
+  content: ",";
   padding-right: 5px;
 }
 
@@ -815,63 +822,48 @@ dl.xr-attrs {
   stroke: currentColor;
   fill: currentColor;
 }
-</style><pre class='xr-text-repr-fallback'>&lt;xarray.Dataset&gt;
+</style><pre class='xr-text-repr-fallback'>&lt;xarray.Dataset&gt; Size: 192B
 Dimensions:      (time: 12)
 Coordinates:
-  * time         (time) int64 19358 19389 19417 19448 ... 19631 19662 19692
+  * time         (time) int64 96B 19358 19389 19417 19448 ... 19631 19662 19692
 Data variables:
-    Temperature  (time) float64 4.6 5.2 7.1 12.3 17.8 ... 22.8 19.0 14.2 8.8 6.1</pre><div class='xr-wrap' style='display:none'><div class='xr-header'><div class='xr-obj-type'>xarray.Dataset</div></div><ul class='xr-sections'><li class='xr-section-item'><input id='section-13421512-2724-4bf6-b491-b1b5cbc69fd4' class='xr-section-summary-in' type='checkbox' disabled ><label for='section-13421512-2724-4bf6-b491-b1b5cbc69fd4' class='xr-section-summary'  title='Expand/collapse section'>Dimensions:</label><div class='xr-section-inline-details'><ul class='xr-dim-list'><li><span class='xr-has-index'>time</span>: 12</li></ul></div><div class='xr-section-details'></div></li><li class='xr-section-item'><input id='section-773774fd-6e7d-4df1-8113-fb11ff0a8769' class='xr-section-summary-in' type='checkbox'  checked><label for='section-773774fd-6e7d-4df1-8113-fb11ff0a8769' class='xr-section-summary' >Coordinates: <span>(1)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>time</span></div><div class='xr-var-dims'>(time)</div><div class='xr-var-dtype'>int64</div><div class='xr-var-preview xr-preview'>19358 19389 19417 ... 19662 19692</div><input id='attrs-adbcb7ab-edda-4903-b5da-a0e4f761b50a' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-adbcb7ab-edda-4903-b5da-a0e4f761b50a' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-508beb1e-d5e2-4d5b-b4ea-d9e78156ac6f' class='xr-var-data-in' type='checkbox'><label for='data-508beb1e-d5e2-4d5b-b4ea-d9e78156ac6f' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>standard_name :</span></dt><dd>time</dd><dt><span>long_name :</span></dt><dd>time in months</dd><dt><span>units :</span></dt><dd>days since 1970-01-01</dd><dt><span>coverage_content_type :</span></dt><dd>coordinate</dd></dl></div><div class='xr-var-data'><pre>array([19358, 19389, 19417, 19448, 19478, 19509, 19539, 19570, 19601, 19631,
-       19662, 19692])</pre></div></li></ul></div></li><li class='xr-section-item'><input id='section-f3c76c8b-1404-4ac3-83d0-8305b616b1a0' class='xr-section-summary-in' type='checkbox'  checked><label for='section-f3c76c8b-1404-4ac3-83d0-8305b616b1a0' class='xr-section-summary' >Data variables: <span>(1)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-var-name'><span>Temperature</span></div><div class='xr-var-dims'>(time)</div><div class='xr-var-dtype'>float64</div><div class='xr-var-preview xr-preview'>4.6 5.2 7.1 12.3 ... 14.2 8.8 6.1</div><input id='attrs-17d8b229-d98d-4c99-8352-9cd3b7f53c2d' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-17d8b229-d98d-4c99-8352-9cd3b7f53c2d' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-762e3601-b09e-43ac-ab20-a2f570e93de2' class='xr-var-data-in' type='checkbox'><label for='data-762e3601-b09e-43ac-ab20-a2f570e93de2' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>standard_name :</span></dt><dd>air_temperature</dd><dt><span>long_name :</span></dt><dd>Maximum air temperatures per month</dd><dt><span>units :</span></dt><dd>Degrees Celsius</dd><dt><span>coverage_content_type :</span></dt><dd>physicalMeasurement</dd></dl></div><div class='xr-var-data'><pre>array([ 4.6,  5.2,  7.1, 12.3, 17.8, 21.3, 24.6, 22.8, 19. , 14.2,  8.8,
-        6.1])</pre></div></li></ul></div></li><li class='xr-section-item'><input id='section-88796fd9-e55e-46cb-9f47-01b21b7da4e3' class='xr-section-summary-in' type='checkbox'  ><label for='section-88796fd9-e55e-46cb-9f47-01b21b7da4e3' class='xr-section-summary' >Indexes: <span>(1)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-index-name'><div>time</div></div><div class='xr-index-preview'>PandasIndex</div><div></div><input id='index-ac128c90-f45e-429d-8c00-db2b64c79f34' class='xr-index-data-in' type='checkbox'/><label for='index-ac128c90-f45e-429d-8c00-db2b64c79f34' title='Show/Hide index repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-index-data'><pre>PandasIndex(Int64Index([19358, 19389, 19417, 19448, 19478, 19509, 19539, 19570, 19601,
-            19631, 19662, 19692],
-           dtype=&#x27;int64&#x27;, name=&#x27;time&#x27;))</pre></div></li></ul></div></li><li class='xr-section-item'><input id='section-2022ad69-cfbe-42ef-b462-733f335f33f9' class='xr-section-summary-in' type='checkbox' disabled ><label for='section-2022ad69-cfbe-42ef-b462-733f335f33f9' class='xr-section-summary'  title='Expand/collapse section'>Attributes: <span>(0)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><dl class='xr-attrs'></dl></div></li></ul></div></div></div></div>
+    Temperature  (time) float64 96B 4.6 5.2 7.1 12.3 17.8 ... 19.0 14.2 8.8 6.1</pre><div class='xr-wrap' style='display:none'><div class='xr-header'><div class='xr-obj-type'>xarray.Dataset</div></div><ul class='xr-sections'><li class='xr-section-item'><input id='section-872934bd-d98c-420e-afa6-1ad9ced60c43' class='xr-section-summary-in' type='checkbox' disabled ><label for='section-872934bd-d98c-420e-afa6-1ad9ced60c43' class='xr-section-summary'  title='Expand/collapse section'>Dimensions:</label><div class='xr-section-inline-details'><ul class='xr-dim-list'><li><span class='xr-has-index'>time</span>: 12</li></ul></div><div class='xr-section-details'></div></li><li class='xr-section-item'><input id='section-5136a2b5-8167-437f-b21b-0822bc45edd5' class='xr-section-summary-in' type='checkbox'  checked><label for='section-5136a2b5-8167-437f-b21b-0822bc45edd5' class='xr-section-summary' >Coordinates: <span>(1)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>time</span></div><div class='xr-var-dims'>(time)</div><div class='xr-var-dtype'>int64</div><div class='xr-var-preview xr-preview'>19358 19389 19417 ... 19662 19692</div><input id='attrs-c111bf91-5e83-4e5a-a402-301b02dba706' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-c111bf91-5e83-4e5a-a402-301b02dba706' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-a330d677-c18b-40d4-b1cd-5ef4efc98ed0' class='xr-var-data-in' type='checkbox'><label for='data-a330d677-c18b-40d4-b1cd-5ef4efc98ed0' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>standard_name :</span></dt><dd>time</dd><dt><span>long_name :</span></dt><dd>time in months</dd><dt><span>units :</span></dt><dd>days since 1970-01-01</dd><dt><span>coverage_content_type :</span></dt><dd>coordinate</dd></dl></div><div class='xr-var-data'><pre>array([19358, 19389, 19417, 19448, 19478, 19509, 19539, 19570, 19601, 19631,
+       19662, 19692])</pre></div></li></ul></div></li><li class='xr-section-item'><input id='section-7a13aa96-e127-4109-ab42-49195660bc89' class='xr-section-summary-in' type='checkbox'  checked><label for='section-7a13aa96-e127-4109-ab42-49195660bc89' class='xr-section-summary' >Data variables: <span>(1)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-var-name'><span>Temperature</span></div><div class='xr-var-dims'>(time)</div><div class='xr-var-dtype'>float64</div><div class='xr-var-preview xr-preview'>4.6 5.2 7.1 12.3 ... 14.2 8.8 6.1</div><input id='attrs-f1157358-a0d2-4682-8d79-b44c0eec5605' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-f1157358-a0d2-4682-8d79-b44c0eec5605' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-3125362e-5db8-4d3c-a4a8-c6ba623cfe90' class='xr-var-data-in' type='checkbox'><label for='data-3125362e-5db8-4d3c-a4a8-c6ba623cfe90' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>standard_name :</span></dt><dd>air_temperature</dd><dt><span>long_name :</span></dt><dd>Maximum air temperatures per month</dd><dt><span>units :</span></dt><dd>Degrees Celsius</dd><dt><span>coverage_content_type :</span></dt><dd>physicalMeasurement</dd></dl></div><div class='xr-var-data'><pre>array([ 4.6,  5.2,  7.1, 12.3, 17.8, 21.3, 24.6, 22.8, 19. , 14.2,  8.8,
+        6.1])</pre></div></li></ul></div></li><li class='xr-section-item'><input id='section-df4cbc2c-bc4f-416c-b401-9623eb25a461' class='xr-section-summary-in' type='checkbox'  ><label for='section-df4cbc2c-bc4f-416c-b401-9623eb25a461' class='xr-section-summary' >Indexes: <span>(1)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-index-name'><div>time</div></div><div class='xr-index-preview'>PandasIndex</div><input type='checkbox' disabled/><label></label><input id='index-3e3c74ba-1796-42fc-b035-df1c43d0d303' class='xr-index-data-in' type='checkbox'/><label for='index-3e3c74ba-1796-42fc-b035-df1c43d0d303' title='Show/Hide index repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-index-data'><pre>PandasIndex(Index([19358, 19389, 19417, 19448, 19478, 19509, 19539, 19570, 19601, 19631,
+       19662, 19692],
+      dtype=&#x27;int64&#x27;, name=&#x27;time&#x27;))</pre></div></li></ul></div></li><li class='xr-section-item'><input id='section-f714903a-4640-4576-a69e-25498087a124' class='xr-section-summary-in' type='checkbox' disabled ><label for='section-f714903a-4640-4576-a69e-25498087a124' class='xr-section-summary'  title='Expand/collapse section'>Attributes: <span>(0)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><dl class='xr-attrs'></dl></div></li></ul></div></div></div></div>
 </div>
 <p>But our values are not representative of just one day; they are maximum values for the month! How can we let the user know is in an unambiguous, machine-readable way? Remember - the long name is free text, so we can’t rely on this.</p>
-<p>We need to include some bounds to define where each month begins and end. Let’s now calculate the number of days since the epoch for the last day of each month.</p>
+<p>We need to include some bounds to define where each month begins and end. This should be from midnight on 1st of the month until midnight on the 1st of the following month.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">days_since_epoch_month_end</span> <span class="o">=</span> <span class="p">[]</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">year</span> <span class="o">=</span> <span class="mi">2023</span>
+<span class="n">epoch</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="mi">1970</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># List to store the start and end times of each cell</span>
+<span class="n">time_bounds</span> <span class="o">=</span> <span class="p">[]</span>
 
 <span class="k">for</span> <span class="n">month</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">13</span><span class="p">):</span>
-    <span class="c1"># Find the last day of the month</span>
-    <span class="n">last_day_of_month</span> <span class="o">=</span> <span class="n">calendar</span><span class="o">.</span><span class="n">monthrange</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
-    <span class="n">last_day_date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">last_day_of_month</span><span class="p">)</span>
-    
-    <span class="c1"># Calculate the days since epoch for the last day of the month</span>
-    <span class="n">time_difference</span> <span class="o">=</span> <span class="p">(</span><span class="n">last_day_date</span> <span class="o">-</span> <span class="n">epoch</span><span class="p">)</span><span class="o">.</span><span class="n">days</span>
-    <span class="n">days_since_epoch_month_end</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">time_difference</span><span class="p">)</span>
+    <span class="c1"># Start of the current month</span>
+    <span class="n">first_day_of_month</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">start_days_since_epoch</span> <span class="o">=</span> <span class="p">(</span><span class="n">first_day_of_month</span> <span class="o">-</span> <span class="n">epoch</span><span class="p">)</span><span class="o">.</span><span class="n">days</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="n">days_since_epoch_month_end</span><span class="p">)</span>
+    <span class="c1"># Start of the next month</span>
+    <span class="k">if</span> <span class="n">month</span> <span class="o">==</span> <span class="mi">12</span><span class="p">:</span>  <span class="c1"># Handle December</span>
+        <span class="n">next_month</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="n">year</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">next_month</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">month</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">end_days_since_epoch</span> <span class="o">=</span> <span class="p">(</span><span class="n">next_month</span> <span class="o">-</span> <span class="n">epoch</span><span class="p">)</span><span class="o">.</span><span class="n">days</span>
+
+    <span class="c1"># Add to bounds</span>
+    <span class="n">time_bounds</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">start_days_since_epoch</span><span class="p">,</span> <span class="n">end_days_since_epoch</span><span class="p">))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">time_bounds</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[19388, 19416, 19447, 19477, 19508, 19538, 19569, 19600, 19630, 19661, 19691, 19722]
-</pre></div>
-</div>
-</div>
-</div>
-<p>Let’s now combine these into a 2D array for the bounds of each month</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">time_bounds_2d_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">days_since_epoch_month_start</span><span class="p">,</span> <span class="n">days_since_epoch_month_end</span><span class="p">)))</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">time_bounds_2d_array</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[[19358 19388]
- [19389 19416]
- [19417 19447]
- [19448 19477]
- [19478 19508]
- [19509 19538]
- [19539 19569]
- [19570 19600]
- [19601 19630]
- [19631 19661]
- [19662 19691]
- [19692 19722]]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[(19358, 19389), (19389, 19417), (19417, 19448), (19448, 19478), (19478, 19509), (19509, 19539), (19539, 19570), (19570, 19601), (19601, 19631), (19631, 19662), (19662, 19692), (19692, 19723)]
 </pre></div>
 </div>
 </div>
@@ -881,7 +873,7 @@ Data variables:
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">xrds</span> <span class="o">=</span> <span class="n">xrds</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">nv</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="c1"># Creating new dimension</span>
 
-<span class="n">xrds</span><span class="p">[</span><span class="s1">&#39;time_bounds&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">([</span><span class="s1">&#39;time&#39;</span><span class="p">,</span><span class="s1">&#39;nv&#39;</span><span class="p">],</span> <span class="n">time_bounds_2d_array</span><span class="p">)</span>
+<span class="n">xrds</span><span class="p">[</span><span class="s1">&#39;time_bounds&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">([</span><span class="s1">&#39;time&#39;</span><span class="p">,</span><span class="s1">&#39;nv&#39;</span><span class="p">],</span> <span class="n">time_bounds</span><span class="p">)</span>
 <span class="n">xrds</span>
 </pre></div>
 </div>
@@ -917,13 +909,14 @@ Data variables:
   --xr-background-color-row-odd: var(--jp-layout-color2, #eeeeee);
 }
 
-html[theme=dark],
-body[data-theme=dark],
+html[theme="dark"],
+html[data-theme="dark"],
+body[data-theme="dark"],
 body.vscode-dark {
   --xr-font-color0: rgba(255, 255, 255, 1);
   --xr-font-color2: rgba(255, 255, 255, 0.54);
   --xr-font-color3: rgba(255, 255, 255, 0.38);
-  --xr-border-color: #1F1F1F;
+  --xr-border-color: #1f1f1f;
   --xr-disabled-color: #515151;
   --xr-background-color: #111111;
   --xr-background-color-row-even: #111111;
@@ -968,7 +961,7 @@ body.vscode-dark {
 .xr-sections {
   padding-left: 0 !important;
   display: grid;
-  grid-template-columns: 150px auto auto 1fr 20px 20px;
+  grid-template-columns: 150px auto auto 1fr 0 20px 0 20px;
 }
 
 .xr-section-item {
@@ -976,7 +969,9 @@ body.vscode-dark {
 }
 
 .xr-section-item input {
-  display: none;
+  display: inline-block;
+  opacity: 0;
+  height: 0;
 }
 
 .xr-section-item input + label {
@@ -986,6 +981,10 @@ body.vscode-dark {
 .xr-section-item input:enabled + label {
   cursor: pointer;
   color: var(--xr-font-color2);
+}
+
+.xr-section-item input:focus + label {
+  border: 2px solid var(--xr-font-color0);
 }
 
 .xr-section-item input:enabled + label:hover {
@@ -1009,7 +1008,7 @@ body.vscode-dark {
 
 .xr-section-summary-in + label:before {
   display: inline-block;
-  content: '►';
+  content: "►";
   font-size: 11px;
   width: 15px;
   text-align: center;
@@ -1020,7 +1019,7 @@ body.vscode-dark {
 }
 
 .xr-section-summary-in:checked + label:before {
-  content: '▼';
+  content: "▼";
 }
 
 .xr-section-summary-in:checked + label > span {
@@ -1092,15 +1091,15 @@ body.vscode-dark {
 }
 
 .xr-dim-list:before {
-  content: '(';
+  content: "(";
 }
 
 .xr-dim-list:after {
-  content: ')';
+  content: ")";
 }
 
 .xr-dim-list li:not(:last-child):after {
-  content: ',';
+  content: ",";
   padding-right: 5px;
 }
 
@@ -1250,31 +1249,31 @@ dl.xr-attrs {
   stroke: currentColor;
   fill: currentColor;
 }
-</style><pre class='xr-text-repr-fallback'>&lt;xarray.Dataset&gt;
+</style><pre class='xr-text-repr-fallback'>&lt;xarray.Dataset&gt; Size: 480B
 Dimensions:      (nv: 2, time: 12)
 Coordinates:
-  * time         (time) int64 19358 19389 19417 19448 ... 19631 19662 19692
+  * time         (time) int64 96B 19358 19389 19417 19448 ... 19631 19662 19692
 Dimensions without coordinates: nv
 Data variables:
-    Temperature  (nv, time) float64 4.6 5.2 7.1 12.3 17.8 ... 19.0 14.2 8.8 6.1
-    time_bounds  (time, nv) int64 19358 19388 19389 19416 ... 19691 19692 19722</pre><div class='xr-wrap' style='display:none'><div class='xr-header'><div class='xr-obj-type'>xarray.Dataset</div></div><ul class='xr-sections'><li class='xr-section-item'><input id='section-5f0dda34-2d5f-40b1-ab31-121826f51e61' class='xr-section-summary-in' type='checkbox' disabled ><label for='section-5f0dda34-2d5f-40b1-ab31-121826f51e61' class='xr-section-summary'  title='Expand/collapse section'>Dimensions:</label><div class='xr-section-inline-details'><ul class='xr-dim-list'><li><span>nv</span>: 2</li><li><span class='xr-has-index'>time</span>: 12</li></ul></div><div class='xr-section-details'></div></li><li class='xr-section-item'><input id='section-32ef81db-1dbd-4a4e-ba0d-f0f1f50b9166' class='xr-section-summary-in' type='checkbox'  checked><label for='section-32ef81db-1dbd-4a4e-ba0d-f0f1f50b9166' class='xr-section-summary' >Coordinates: <span>(1)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>time</span></div><div class='xr-var-dims'>(time)</div><div class='xr-var-dtype'>int64</div><div class='xr-var-preview xr-preview'>19358 19389 19417 ... 19662 19692</div><input id='attrs-1e7811a4-4a10-4a2a-bac3-92471ca8e12d' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-1e7811a4-4a10-4a2a-bac3-92471ca8e12d' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-458d42d9-1000-4d10-be33-ff433b6f050c' class='xr-var-data-in' type='checkbox'><label for='data-458d42d9-1000-4d10-be33-ff433b6f050c' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>standard_name :</span></dt><dd>time</dd><dt><span>long_name :</span></dt><dd>time in months</dd><dt><span>units :</span></dt><dd>days since 1970-01-01</dd><dt><span>coverage_content_type :</span></dt><dd>coordinate</dd></dl></div><div class='xr-var-data'><pre>array([19358, 19389, 19417, 19448, 19478, 19509, 19539, 19570, 19601, 19631,
-       19662, 19692])</pre></div></li></ul></div></li><li class='xr-section-item'><input id='section-53692f9d-045d-42bc-a010-4ecdecfab67b' class='xr-section-summary-in' type='checkbox'  checked><label for='section-53692f9d-045d-42bc-a010-4ecdecfab67b' class='xr-section-summary' >Data variables: <span>(2)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-var-name'><span>Temperature</span></div><div class='xr-var-dims'>(nv, time)</div><div class='xr-var-dtype'>float64</div><div class='xr-var-preview xr-preview'>4.6 5.2 7.1 12.3 ... 14.2 8.8 6.1</div><input id='attrs-7d0d1775-3f44-4b5a-97a5-40fed2c6da73' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-7d0d1775-3f44-4b5a-97a5-40fed2c6da73' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-2fb6c791-c157-4013-adaf-1b78189587bb' class='xr-var-data-in' type='checkbox'><label for='data-2fb6c791-c157-4013-adaf-1b78189587bb' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>standard_name :</span></dt><dd>air_temperature</dd><dt><span>long_name :</span></dt><dd>Maximum air temperatures per month</dd><dt><span>units :</span></dt><dd>Degrees Celsius</dd><dt><span>coverage_content_type :</span></dt><dd>physicalMeasurement</dd></dl></div><div class='xr-var-data'><pre>array([[ 4.6,  5.2,  7.1, 12.3, 17.8, 21.3, 24.6, 22.8, 19. , 14.2,  8.8,
+    Temperature  (nv, time) float64 192B 4.6 5.2 7.1 12.3 ... 19.0 14.2 8.8 6.1
+    time_bounds  (time, nv) int64 192B 19358 19389 19389 ... 19692 19692 19723</pre><div class='xr-wrap' style='display:none'><div class='xr-header'><div class='xr-obj-type'>xarray.Dataset</div></div><ul class='xr-sections'><li class='xr-section-item'><input id='section-b19e1f8f-795d-4646-aae6-d507b7a869ab' class='xr-section-summary-in' type='checkbox' disabled ><label for='section-b19e1f8f-795d-4646-aae6-d507b7a869ab' class='xr-section-summary'  title='Expand/collapse section'>Dimensions:</label><div class='xr-section-inline-details'><ul class='xr-dim-list'><li><span>nv</span>: 2</li><li><span class='xr-has-index'>time</span>: 12</li></ul></div><div class='xr-section-details'></div></li><li class='xr-section-item'><input id='section-02ec4e66-e0c0-484f-b747-a8ab556a2f79' class='xr-section-summary-in' type='checkbox'  checked><label for='section-02ec4e66-e0c0-484f-b747-a8ab556a2f79' class='xr-section-summary' >Coordinates: <span>(1)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>time</span></div><div class='xr-var-dims'>(time)</div><div class='xr-var-dtype'>int64</div><div class='xr-var-preview xr-preview'>19358 19389 19417 ... 19662 19692</div><input id='attrs-eb14320f-fe35-4372-a65a-cd7cc8cfd07a' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-eb14320f-fe35-4372-a65a-cd7cc8cfd07a' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-cb584d8f-5094-4c91-b32a-11b5482fef29' class='xr-var-data-in' type='checkbox'><label for='data-cb584d8f-5094-4c91-b32a-11b5482fef29' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>standard_name :</span></dt><dd>time</dd><dt><span>long_name :</span></dt><dd>time in months</dd><dt><span>units :</span></dt><dd>days since 1970-01-01</dd><dt><span>coverage_content_type :</span></dt><dd>coordinate</dd></dl></div><div class='xr-var-data'><pre>array([19358, 19389, 19417, 19448, 19478, 19509, 19539, 19570, 19601, 19631,
+       19662, 19692])</pre></div></li></ul></div></li><li class='xr-section-item'><input id='section-9cb27222-e4fd-40e9-998f-8a39baa296f1' class='xr-section-summary-in' type='checkbox'  checked><label for='section-9cb27222-e4fd-40e9-998f-8a39baa296f1' class='xr-section-summary' >Data variables: <span>(2)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-var-name'><span>Temperature</span></div><div class='xr-var-dims'>(nv, time)</div><div class='xr-var-dtype'>float64</div><div class='xr-var-preview xr-preview'>4.6 5.2 7.1 12.3 ... 14.2 8.8 6.1</div><input id='attrs-980668ea-2f53-4304-b970-e0c8ebaafa3c' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-980668ea-2f53-4304-b970-e0c8ebaafa3c' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-57a57abb-8478-443c-9479-0b1be1807d85' class='xr-var-data-in' type='checkbox'><label for='data-57a57abb-8478-443c-9479-0b1be1807d85' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>standard_name :</span></dt><dd>air_temperature</dd><dt><span>long_name :</span></dt><dd>Maximum air temperatures per month</dd><dt><span>units :</span></dt><dd>Degrees Celsius</dd><dt><span>coverage_content_type :</span></dt><dd>physicalMeasurement</dd></dl></div><div class='xr-var-data'><pre>array([[ 4.6,  5.2,  7.1, 12.3, 17.8, 21.3, 24.6, 22.8, 19. , 14.2,  8.8,
          6.1],
        [ 4.6,  5.2,  7.1, 12.3, 17.8, 21.3, 24.6, 22.8, 19. , 14.2,  8.8,
-         6.1]])</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span>time_bounds</span></div><div class='xr-var-dims'>(time, nv)</div><div class='xr-var-dtype'>int64</div><div class='xr-var-preview xr-preview'>19358 19388 19389 ... 19692 19722</div><input id='attrs-b3d4fee3-a232-4ecd-b2b8-ddcad119760b' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-b3d4fee3-a232-4ecd-b2b8-ddcad119760b' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-960b62fe-8a6c-4bb0-8324-4cc867a81dbc' class='xr-var-data-in' type='checkbox'><label for='data-960b62fe-8a6c-4bb0-8324-4cc867a81dbc' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array([[19358, 19388],
-       [19389, 19416],
-       [19417, 19447],
-       [19448, 19477],
-       [19478, 19508],
-       [19509, 19538],
-       [19539, 19569],
-       [19570, 19600],
-       [19601, 19630],
-       [19631, 19661],
-       [19662, 19691],
-       [19692, 19722]])</pre></div></li></ul></div></li><li class='xr-section-item'><input id='section-85ace2d1-662e-424a-817e-7bb0ff503991' class='xr-section-summary-in' type='checkbox'  ><label for='section-85ace2d1-662e-424a-817e-7bb0ff503991' class='xr-section-summary' >Indexes: <span>(1)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-index-name'><div>time</div></div><div class='xr-index-preview'>PandasIndex</div><div></div><input id='index-5680fb37-ead3-4947-b07f-ebecbb0f1d18' class='xr-index-data-in' type='checkbox'/><label for='index-5680fb37-ead3-4947-b07f-ebecbb0f1d18' title='Show/Hide index repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-index-data'><pre>PandasIndex(Int64Index([19358, 19389, 19417, 19448, 19478, 19509, 19539, 19570, 19601,
-            19631, 19662, 19692],
-           dtype=&#x27;int64&#x27;, name=&#x27;time&#x27;))</pre></div></li></ul></div></li><li class='xr-section-item'><input id='section-214238c1-db00-417a-a0eb-2f3bfa00d0ad' class='xr-section-summary-in' type='checkbox' disabled ><label for='section-214238c1-db00-417a-a0eb-2f3bfa00d0ad' class='xr-section-summary'  title='Expand/collapse section'>Attributes: <span>(0)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><dl class='xr-attrs'></dl></div></li></ul></div></div></div></div>
+         6.1]])</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span>time_bounds</span></div><div class='xr-var-dims'>(time, nv)</div><div class='xr-var-dtype'>int64</div><div class='xr-var-preview xr-preview'>19358 19389 19389 ... 19692 19723</div><input id='attrs-531ead7e-3a80-488c-99ef-70aa2fa2e236' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-531ead7e-3a80-488c-99ef-70aa2fa2e236' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-8a0c430c-e118-4be1-bdd4-68d85b599cc1' class='xr-var-data-in' type='checkbox'><label for='data-8a0c430c-e118-4be1-bdd4-68d85b599cc1' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array([[19358, 19389],
+       [19389, 19417],
+       [19417, 19448],
+       [19448, 19478],
+       [19478, 19509],
+       [19509, 19539],
+       [19539, 19570],
+       [19570, 19601],
+       [19601, 19631],
+       [19631, 19662],
+       [19662, 19692],
+       [19692, 19723]])</pre></div></li></ul></div></li><li class='xr-section-item'><input id='section-bd0f29a4-eb06-4dc1-88a6-ca5e5feed7e0' class='xr-section-summary-in' type='checkbox'  ><label for='section-bd0f29a4-eb06-4dc1-88a6-ca5e5feed7e0' class='xr-section-summary' >Indexes: <span>(1)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-index-name'><div>time</div></div><div class='xr-index-preview'>PandasIndex</div><input type='checkbox' disabled/><label></label><input id='index-d4a9833c-f8c7-469f-822a-05a90c557d0c' class='xr-index-data-in' type='checkbox'/><label for='index-d4a9833c-f8c7-469f-822a-05a90c557d0c' title='Show/Hide index repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-index-data'><pre>PandasIndex(Index([19358, 19389, 19417, 19448, 19478, 19509, 19539, 19570, 19601, 19631,
+       19662, 19692],
+      dtype=&#x27;int64&#x27;, name=&#x27;time&#x27;))</pre></div></li></ul></div></li><li class='xr-section-item'><input id='section-11f7d005-36c0-48a6-a48b-1c0f83294c4d' class='xr-section-summary-in' type='checkbox' disabled ><label for='section-11f7d005-36c0-48a6-a48b-1c0f83294c4d' class='xr-section-summary'  title='Expand/collapse section'>Attributes: <span>(0)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><dl class='xr-attrs'></dl></div></li></ul></div></div></div></div>
 </div>
 <p>Now we need to add metadata to make this machine readable. Below we are saying that the <em>time_bounds</em> variable defines the bounds of the <em>time</em> variable. We are using <em>cell_methods</em> to state that values are the maximums within each cell with respect to time.</p>
 <div class="cell docutils container">
@@ -1429,13 +1428,14 @@ Data variables:
   --xr-background-color-row-odd: var(--jp-layout-color2, #eeeeee);
 }
 
-html[theme=dark],
-body[data-theme=dark],
+html[theme="dark"],
+html[data-theme="dark"],
+body[data-theme="dark"],
 body.vscode-dark {
   --xr-font-color0: rgba(255, 255, 255, 1);
   --xr-font-color2: rgba(255, 255, 255, 0.54);
   --xr-font-color3: rgba(255, 255, 255, 0.38);
-  --xr-border-color: #1F1F1F;
+  --xr-border-color: #1f1f1f;
   --xr-disabled-color: #515151;
   --xr-background-color: #111111;
   --xr-background-color-row-even: #111111;
@@ -1480,7 +1480,7 @@ body.vscode-dark {
 .xr-sections {
   padding-left: 0 !important;
   display: grid;
-  grid-template-columns: 150px auto auto 1fr 20px 20px;
+  grid-template-columns: 150px auto auto 1fr 0 20px 0 20px;
 }
 
 .xr-section-item {
@@ -1488,7 +1488,9 @@ body.vscode-dark {
 }
 
 .xr-section-item input {
-  display: none;
+  display: inline-block;
+  opacity: 0;
+  height: 0;
 }
 
 .xr-section-item input + label {
@@ -1498,6 +1500,10 @@ body.vscode-dark {
 .xr-section-item input:enabled + label {
   cursor: pointer;
   color: var(--xr-font-color2);
+}
+
+.xr-section-item input:focus + label {
+  border: 2px solid var(--xr-font-color0);
 }
 
 .xr-section-item input:enabled + label:hover {
@@ -1521,7 +1527,7 @@ body.vscode-dark {
 
 .xr-section-summary-in + label:before {
   display: inline-block;
-  content: '►';
+  content: "►";
   font-size: 11px;
   width: 15px;
   text-align: center;
@@ -1532,7 +1538,7 @@ body.vscode-dark {
 }
 
 .xr-section-summary-in:checked + label:before {
-  content: '▼';
+  content: "▼";
 }
 
 .xr-section-summary-in:checked + label > span {
@@ -1604,15 +1610,15 @@ body.vscode-dark {
 }
 
 .xr-dim-list:before {
-  content: '(';
+  content: "(";
 }
 
 .xr-dim-list:after {
-  content: ')';
+  content: ")";
 }
 
 .xr-dim-list li:not(:last-child):after {
-  content: ',';
+  content: ",";
   padding-right: 5px;
 }
 
@@ -1762,18 +1768,18 @@ dl.xr-attrs {
   stroke: currentColor;
   fill: currentColor;
 }
-</style><pre class='xr-text-repr-fallback'>&lt;xarray.Dataset&gt;
+</style><pre class='xr-text-repr-fallback'>&lt;xarray.Dataset&gt; Size: 160B
 Dimensions:       (nv: 2, depth: 4)
 Coordinates:
-  * depth         (depth) int64 0 10 20 30
+  * depth         (depth) int64 32B 0 10 20 30
 Dimensions without coordinates: nv
 Data variables:
-    Salinity      (nv, depth) float64 35.4 35.6 35.5 35.2 35.4 35.6 35.5 35.2
-    depth_bounds  (depth, nv) int64 0 10 10 20 20 30 30 38</pre><div class='xr-wrap' style='display:none'><div class='xr-header'><div class='xr-obj-type'>xarray.Dataset</div></div><ul class='xr-sections'><li class='xr-section-item'><input id='section-9d5ea4c3-43c0-49cb-8e8b-eb98fc2f36c6' class='xr-section-summary-in' type='checkbox' disabled ><label for='section-9d5ea4c3-43c0-49cb-8e8b-eb98fc2f36c6' class='xr-section-summary'  title='Expand/collapse section'>Dimensions:</label><div class='xr-section-inline-details'><ul class='xr-dim-list'><li><span>nv</span>: 2</li><li><span class='xr-has-index'>depth</span>: 4</li></ul></div><div class='xr-section-details'></div></li><li class='xr-section-item'><input id='section-ceb03057-fdac-4644-9b80-d3c5824d59ce' class='xr-section-summary-in' type='checkbox'  checked><label for='section-ceb03057-fdac-4644-9b80-d3c5824d59ce' class='xr-section-summary' >Coordinates: <span>(1)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>depth</span></div><div class='xr-var-dims'>(depth)</div><div class='xr-var-dtype'>int64</div><div class='xr-var-preview xr-preview'>0 10 20 30</div><input id='attrs-c267deb3-eff6-4be7-96cd-f466cbaed351' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-c267deb3-eff6-4be7-96cd-f466cbaed351' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-96d15e7f-7ca4-4180-a023-19136c5c053d' class='xr-var-data-in' type='checkbox'><label for='data-96d15e7f-7ca4-4180-a023-19136c5c053d' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>standard_name :</span></dt><dd>depth</dd><dt><span>long_name :</span></dt><dd>depth in ice core</dd><dt><span>units :</span></dt><dd>cm</dd><dt><span>positive :</span></dt><dd>down</dd><dt><span>coverage_content_type :</span></dt><dd>coordinate</dd><dt><span>bounds :</span></dt><dd>depth_bounds</dd></dl></div><div class='xr-var-data'><pre>array([ 0, 10, 20, 30])</pre></div></li></ul></div></li><li class='xr-section-item'><input id='section-686b1389-f7cb-475c-907e-db7e572ae860' class='xr-section-summary-in' type='checkbox'  checked><label for='section-686b1389-f7cb-475c-907e-db7e572ae860' class='xr-section-summary' >Data variables: <span>(2)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-var-name'><span>Salinity</span></div><div class='xr-var-dims'>(nv, depth)</div><div class='xr-var-dtype'>float64</div><div class='xr-var-preview xr-preview'>35.4 35.6 35.5 ... 35.6 35.5 35.2</div><input id='attrs-348a31de-b106-465d-aaef-ff86d94694d6' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-348a31de-b106-465d-aaef-ff86d94694d6' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-1b074cbd-c14b-44d9-a060-85033e8f17c4' class='xr-var-data-in' type='checkbox'><label for='data-1b074cbd-c14b-44d9-a060-85033e8f17c4' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>standard_name :</span></dt><dd>sea_ice_salinity</dd><dt><span>long_name :</span></dt><dd>Salinity of sea ice measured by melting chunks of an ice core</dd><dt><span>units :</span></dt><dd>1e-3</dd><dt><span>coverage_content_type :</span></dt><dd>physicalMeasurement</dd><dt><span>cell_methods :</span></dt><dd>depth: mean</dd></dl></div><div class='xr-var-data'><pre>array([[35.4, 35.6, 35.5, 35.2],
-       [35.4, 35.6, 35.5, 35.2]])</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span>depth_bounds</span></div><div class='xr-var-dims'>(depth, nv)</div><div class='xr-var-dtype'>int64</div><div class='xr-var-preview xr-preview'>0 10 10 20 20 30 30 38</div><input id='attrs-12501b29-0d1b-453c-8a18-aeb2629bd138' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-12501b29-0d1b-453c-8a18-aeb2629bd138' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-5b0cabcb-b836-414c-aeea-c9768b647e1e' class='xr-var-data-in' type='checkbox'><label for='data-5b0cabcb-b836-414c-aeea-c9768b647e1e' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array([[ 0, 10],
+    Salinity      (nv, depth) float64 64B 35.4 35.6 35.5 35.2 ... 35.6 35.5 35.2
+    depth_bounds  (depth, nv) int64 64B 0 10 10 20 20 30 30 38</pre><div class='xr-wrap' style='display:none'><div class='xr-header'><div class='xr-obj-type'>xarray.Dataset</div></div><ul class='xr-sections'><li class='xr-section-item'><input id='section-5be9050c-c3bc-4736-b3ff-6e31d3423ea3' class='xr-section-summary-in' type='checkbox' disabled ><label for='section-5be9050c-c3bc-4736-b3ff-6e31d3423ea3' class='xr-section-summary'  title='Expand/collapse section'>Dimensions:</label><div class='xr-section-inline-details'><ul class='xr-dim-list'><li><span>nv</span>: 2</li><li><span class='xr-has-index'>depth</span>: 4</li></ul></div><div class='xr-section-details'></div></li><li class='xr-section-item'><input id='section-a7ad7bb4-3823-4eca-b79d-97c4893635cc' class='xr-section-summary-in' type='checkbox'  checked><label for='section-a7ad7bb4-3823-4eca-b79d-97c4893635cc' class='xr-section-summary' >Coordinates: <span>(1)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>depth</span></div><div class='xr-var-dims'>(depth)</div><div class='xr-var-dtype'>int64</div><div class='xr-var-preview xr-preview'>0 10 20 30</div><input id='attrs-a8b70ac2-3958-492a-be88-68dabf9215b1' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-a8b70ac2-3958-492a-be88-68dabf9215b1' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-749a9540-a7ed-41d9-928e-2be61ef5aaa6' class='xr-var-data-in' type='checkbox'><label for='data-749a9540-a7ed-41d9-928e-2be61ef5aaa6' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>standard_name :</span></dt><dd>depth</dd><dt><span>long_name :</span></dt><dd>depth in ice core</dd><dt><span>units :</span></dt><dd>cm</dd><dt><span>positive :</span></dt><dd>down</dd><dt><span>coverage_content_type :</span></dt><dd>coordinate</dd><dt><span>bounds :</span></dt><dd>depth_bounds</dd></dl></div><div class='xr-var-data'><pre>array([ 0, 10, 20, 30])</pre></div></li></ul></div></li><li class='xr-section-item'><input id='section-ffb84a34-96eb-473d-b339-85cf5ff75503' class='xr-section-summary-in' type='checkbox'  checked><label for='section-ffb84a34-96eb-473d-b339-85cf5ff75503' class='xr-section-summary' >Data variables: <span>(2)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-var-name'><span>Salinity</span></div><div class='xr-var-dims'>(nv, depth)</div><div class='xr-var-dtype'>float64</div><div class='xr-var-preview xr-preview'>35.4 35.6 35.5 ... 35.6 35.5 35.2</div><input id='attrs-030912a6-8ecb-4ebf-ae2d-5add78250013' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-030912a6-8ecb-4ebf-ae2d-5add78250013' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-4c0299ac-a3f1-4c8b-8a70-c9412889bacf' class='xr-var-data-in' type='checkbox'><label for='data-4c0299ac-a3f1-4c8b-8a70-c9412889bacf' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>standard_name :</span></dt><dd>sea_ice_salinity</dd><dt><span>long_name :</span></dt><dd>Salinity of sea ice measured by melting chunks of an ice core</dd><dt><span>units :</span></dt><dd>1e-3</dd><dt><span>coverage_content_type :</span></dt><dd>physicalMeasurement</dd><dt><span>cell_methods :</span></dt><dd>depth: mean</dd></dl></div><div class='xr-var-data'><pre>array([[35.4, 35.6, 35.5, 35.2],
+       [35.4, 35.6, 35.5, 35.2]])</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span>depth_bounds</span></div><div class='xr-var-dims'>(depth, nv)</div><div class='xr-var-dtype'>int64</div><div class='xr-var-preview xr-preview'>0 10 10 20 20 30 30 38</div><input id='attrs-df531aec-8dc2-4b43-bc7c-c322427b1316' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-df531aec-8dc2-4b43-bc7c-c322427b1316' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-8a93d7a9-ab4f-46fe-9f51-331ee999d9c6' class='xr-var-data-in' type='checkbox'><label for='data-8a93d7a9-ab4f-46fe-9f51-331ee999d9c6' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array([[ 0, 10],
        [10, 20],
        [20, 30],
-       [30, 38]])</pre></div></li></ul></div></li><li class='xr-section-item'><input id='section-2f0dac15-3ca1-4c58-8273-0b8c9dc48010' class='xr-section-summary-in' type='checkbox'  ><label for='section-2f0dac15-3ca1-4c58-8273-0b8c9dc48010' class='xr-section-summary' >Indexes: <span>(1)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-index-name'><div>depth</div></div><div class='xr-index-preview'>PandasIndex</div><div></div><input id='index-a77d09ff-166e-4933-aba7-c6ea624a975e' class='xr-index-data-in' type='checkbox'/><label for='index-a77d09ff-166e-4933-aba7-c6ea624a975e' title='Show/Hide index repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-index-data'><pre>PandasIndex(Int64Index([0, 10, 20, 30], dtype=&#x27;int64&#x27;, name=&#x27;depth&#x27;))</pre></div></li></ul></div></li><li class='xr-section-item'><input id='section-f1125432-9037-4cc3-84a4-ffb54022c5ad' class='xr-section-summary-in' type='checkbox' disabled ><label for='section-f1125432-9037-4cc3-84a4-ffb54022c5ad' class='xr-section-summary'  title='Expand/collapse section'>Attributes: <span>(0)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><dl class='xr-attrs'></dl></div></li></ul></div></div></div></div>
+       [30, 38]])</pre></div></li></ul></div></li><li class='xr-section-item'><input id='section-ea028e32-a70b-4412-ae48-52c0758111b4' class='xr-section-summary-in' type='checkbox'  ><label for='section-ea028e32-a70b-4412-ae48-52c0758111b4' class='xr-section-summary' >Indexes: <span>(1)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-index-name'><div>depth</div></div><div class='xr-index-preview'>PandasIndex</div><input type='checkbox' disabled/><label></label><input id='index-919b86ee-57e6-4101-89a9-8489eb8338b9' class='xr-index-data-in' type='checkbox'/><label for='index-919b86ee-57e6-4101-89a9-8489eb8338b9' title='Show/Hide index repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-index-data'><pre>PandasIndex(Index([0, 10, 20, 30], dtype=&#x27;int64&#x27;, name=&#x27;depth&#x27;))</pre></div></li></ul></div></li><li class='xr-section-item'><input id='section-824ee187-766b-4b18-ab0a-f7f72e93d66c' class='xr-section-summary-in' type='checkbox' disabled ><label for='section-824ee187-766b-4b18-ab0a-f7f72e93d66c' class='xr-section-summary'  title='Expand/collapse section'>Attributes: <span>(0)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><dl class='xr-attrs'></dl></div></li></ul></div></div></div></div>
 </div>
 </section>
 <section id="how-to-cite-this-course">
